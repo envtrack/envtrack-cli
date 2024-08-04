@@ -1,5 +1,7 @@
 theme: jekyll-theme-hacker
 title: EnvTrack CLI
 description: A powerful CLI tool for managing development server environments
+show_downloads: true
 plugins:
+  - jekyll-remote-theme
   - jemoji

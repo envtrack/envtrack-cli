@@ -25,28 +25,28 @@ Choose your preferred installation method:
 #### Using Go Install
 
 ```bash
-go install github.com/yourusername/envtrack-cli/cmd/envtrack@latest
+go install github.com/envtrack/envtrack-cli/cmd/envtrack@latest
 ```
 
 #### Homebrew (macOS and Linux)
 
 ```bash
-brew tap yourusername/tap
+brew tap envtrack/tap
 brew install envtrack
 ```
 
 #### Scoop (Windows)
 
 ```powershell
-scoop bucket add yourbucket https://github.com/yourusername/scoop-bucket.git
+scoop bucket add yourbucket https://github.com/envtrack/scoop-bucket.git
 scoop install envtrack
 ```
 
 #### Docker
 
 ```bash
-docker pull yourusername/envtrack:latest
-docker run yourusername/envtrack:latest [commands]
+docker pull envtrack/envtrack:latest
+docker run envtrack/envtrack:latest [commands]
 ```
 
 ### Basic Usage
@@ -78,16 +78,16 @@ docker run yourusername/envtrack:latest [commands]
 
 ## Documentation
 
-For more detailed information, please check out our [full documentation](https://github.com/yourusername/envtrack-cli/wiki).
+For more detailed information, please check out our [full documentation](https://github.com/envtrack/envtrack-cli/wiki).
 
 ## Contributing
 
-We welcome contributions! Please see our [contribution guidelines](https://github.com/yourusername/envtrack-cli/blob/main/CONTRIBUTING.md) for more details.
+We welcome contributions! Please see our [contribution guidelines](https://github.com/envtrack/envtrack-cli/blob/main/CONTRIBUTING.md) for more details.
 
 ## Support
 
-If you encounter any issues or have questions, please [open an issue](https://github.com/yourusername/envtrack-cli/issues) on our GitHub repository.
+If you encounter any issues or have questions, please [open an issue](https://github.com/envtrack/envtrack-cli/issues) on our GitHub repository.
 
 ## License
 
-EnvTrack CLI is released under the MIT License. See the [LICENSE](https://github.com/yourusername/envtrack-cli/blob/main/LICENSE) file for more details.
+EnvTrack CLI is released under the MIT License. See the [LICENSE](https://github.com/envtrack/envtrack-cli/blob/main/LICENSE) file for more details.
