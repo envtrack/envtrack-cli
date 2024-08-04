@@ -31,6 +31,7 @@ func main() {
 
 	commands.AddCommands(rootCmd)
 	rootCmd.AddCommand(commands.ConfigureCommand())
+	rootCmd.AddCommand(commands.VersionCommand())
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

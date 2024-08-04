@@ -1,0 +1,66 @@
+name: Build EnvTrack CLI
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - 'b*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # This ensures all tags are fetched
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+    - name: Run tests
+      run: go test ./...
+    - name: Build
+      run: ./build.sh
+    - name: Generate MD5 Checksums
+      run: |
+        cd dist
+        md5sum * > checksums.md5
+        cd ..
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: ${{ startsWith(github.ref, 'b') }}
+    - name: Upload Release Assets
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          const fs = require('fs').promises;
+          const path = require('path');
+          
+          const release_id = '${{ steps.create_release.outputs.id }}';
+          const dist_path = path.join(process.env.GITHUB_WORKSPACE, 'dist');
+          
+          const files = await fs.readdir(dist_path);
+          
+          for (const file of files) {
+            const filePath = path.join(dist_path, file);
+            const stats = await fs.stat(filePath);
+            
+            if (stats.isFile()) {
+              console.log(`Uploading ${file}...`);
+              await github.rest.repos.uploadReleaseAsset({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: release_id,
+                name: file,
+                data: await fs.readFile(filePath)
+              });
+            }
+          }
