@@ -37,6 +37,8 @@ brew install envtrack
 
 #### Scoop (Windows)
 
+> TODO
+
 ```powershell
 scoop bucket add yourbucket https://github.com/envtrack/scoop-bucket.git
 scoop install envtrack
@@ -44,9 +46,11 @@ scoop install envtrack
 
 #### Docker
 
+More info in the [repo](https://hub.docker.com/r/envtrack/envtrack-cli)
+
 ```bash
-docker pull envtrack/envtrack:latest
-docker run envtrack/envtrack:latest [commands]
+docker pull envtrack/envtrack-cli:latest
+docker run envtrack/envtrack-cli:latest [commands]
 ```
 
 ### Basic Usage
