@@ -98,8 +98,8 @@ Supported formats: `json`, `yaml`, `csv`
 
 ### Prerequisites
 
-- Go 1.17 or later
-- Make (optional, for using Makefile commands)
+- Go 1.22 or later
+- Account on the [EnvTrack](https://app.envtrack.com) service
 
 ### Setup
 
