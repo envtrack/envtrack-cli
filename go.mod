@@ -1,6 +1,6 @@
 module github.com/envtrack/envtrack-cli
 
-go 1.22.5
+go 1.22
 
 require (
 	github.com/spf13/cobra v1.8.1
