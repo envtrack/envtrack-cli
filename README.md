@@ -16,7 +16,7 @@ EnvTrack CLI is a command-line interface tool for managing and tracking developm
 
 ### Prerequisites
 
-- Go 1.23 or later
+- Go 1.22 or later
 
 ### Using Go Install
 
