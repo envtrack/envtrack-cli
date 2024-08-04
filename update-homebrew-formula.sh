@@ -7,12 +7,19 @@ set -e
 # Check if all required arguments are provided
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 <version> <github_token> <tap_repo>"
+    echo "Recived $# arguments"
+    echo "Arguments:"
+    echo "$1 <version> - Version of the EnvTrack CLI"
+    # show only the first 3 characters of the token
+    echo "** <github_token> - GitHub token to access the repository"
+    echo "$3 <tap_repo> - GitHub repository for the Homebrew tap"
     exit 1
 fi
 
 VERSION=$1
 GITHUB_TOKEN=$2
 TAP_REPO=$3
+GITHUB_REPOSITORY="envtrack/envtrack-cli"
 
 # Remove 'b-' prefix for Homebrew version
 BREW_VERSION=$VERSION
