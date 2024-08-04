@@ -39,6 +39,7 @@ func VersionCommand() *cobra.Command {
 		Long:  `All software has versions. This is EnvTrack's`,
 		Run:   runVersion,
 	}
+	cmd.Flags().Bool("short", false, "Print just the version number")
 
 	return cmd
 }
@@ -50,6 +51,13 @@ func runVersion(cmd *cobra.Command, args []string) {
 		"build_time":       BuildTime,
 		"local_build_time": LocalBuildTime,
 	}
+
+	short, _ := cmd.Flags().GetBool("short")
+	if short {
+		fmt.Printf("%s\n", data["version"])
+		return
+	}
+
 	formatter, err := getFormatter(cmd.Context())
 	if err != nil {
 		fmt.Printf("Error getting formatter: %v\n", err)
