@@ -72,4 +72,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.ENVTRACK_REPO_PERSONAL_TOKEN }}
       run: |
         chmod +x ./update-homebrew-formula.sh
-        ./update-homebrew-formula.sh ${{ github.ref }} ${{ secrets.HOMEBREW_TAP_TOKEN }} envtrack/homebrew-tap
+        ./update-homebrew-formula.sh ${{ github.ref }} ${{ secrets.ENVTRACK_REPO_PERSONAL_TOKEN }} envtrack/homebrew-tap
