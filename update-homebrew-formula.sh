@@ -14,6 +14,11 @@ VERSION=$1
 GITHUB_TOKEN=$2
 TAP_REPO=$3
 
+# Remove 'b-' prefix for Homebrew version
+BREW_VERSION=$VERSION
+BREW_VERSION=$(echo $BREW_VERSION | sed 's/^b-//')
+BREW_VERSION=$(echo $BREW_VERSION | sed 's/^v-//')
+
 # Function to calculate SHA256
 calculate_sha256() {
     local file=$1
@@ -36,7 +41,7 @@ cat > Formula/envtrack.rb << EOL
 class Envtrack < Formula
   desc "EnvTrack CLI tool for managing environment variables"
   homepage "https://github.com/${GITHUB_REPOSITORY}"
-  version "${VERSION}"
+  version "${BREW_VERSION}"
   license "MIT"
 
   if OS.mac?
@@ -62,7 +67,7 @@ class Envtrack < Formula
   end
 
   test do
-    assert_match "EnvTrack CLI version ${VERSION}", shell_output("#{bin}/envtrack version")
+    assert_match "EnvTrack CLI version ${BREW_VERSION}", shell_output("#{bin}/envtrack version")
   end
 end
 EOL
@@ -71,7 +76,7 @@ EOL
 git config user.name "GitHub Actions Bot"
 git config user.email "<>"
 git add Formula/envtrack.rb
-git commit -m "Update EnvTrack formula to version ${VERSION}"
+git commit -m "Update EnvTrack formula to version ${BREW_VERSION}"
 git push
 
 echo "Homebrew formula updated successfully!"
