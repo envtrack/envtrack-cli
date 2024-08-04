@@ -4,7 +4,7 @@ layout: default
 
 # Welcome to EnvTrack CLI
 
-EnvTrack CLI is a command-line interface tool for managing and tracking development server usage within a team. It allows team members to interact with the EnvTrack service, managing organizations, projects, environments, and variables.
+EnvTrack CLI is a command-line interface tool for managing and tracking development server usage within a team. It allows team members to interact with the [EnvTrack](https://app.envtrack.com) service, managing organizations, projects, environments, and variables.
 
 ## Key Features
 
