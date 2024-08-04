@@ -66,3 +66,9 @@ jobs:
               });
             }
           }
+    - name: Update Homebrew Formula
+      env:
+        GITHUB_TOKEN: ${{ secrets.ENVTRACK_REPO_PERSONAL_TOKEN }}
+      run: |
+        chmod +x ./update-homebrew-formula.sh
+        ./update-homebrew-formula.sh ${{ github.ref_name }} ${{ secrets.HOMEBREW_TAP_TOKEN }} envtrack/homebrew-tap
