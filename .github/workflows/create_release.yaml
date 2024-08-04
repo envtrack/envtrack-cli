@@ -37,7 +37,7 @@ jobs:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
         draft: false
-        prerelease: ${{ startsWith(github.ref, 'b') }}
+        prerelease: ${{ startsWith(github.ref, 'refs/tags/b-') }}
     - name: Upload Release Assets
       uses: actions/github-script@v6
       with:
@@ -72,4 +72,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.ENVTRACK_REPO_PERSONAL_TOKEN }}
       run: |
         chmod +x ./update-homebrew-formula.sh
-        ./update-homebrew-formula.sh ${{ github.ref }} ${{ secrets.ENVTRACK_REPO_PERSONAL_TOKEN }} envtrack/homebrew-tap
+        ./update-homebrew-formula.sh ${{ github.ref_name }} ${{ secrets.ENVTRACK_REPO_PERSONAL_TOKEN }} envtrack/homebrew-tap
