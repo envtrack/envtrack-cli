@@ -11,10 +11,11 @@ import (
 
 func authCommand() *cobra.Command {
 	return &cobra.Command{
-		Use:   "auth <token>",
-		Short: "Authenticate with the EnvTrack service",
-		Args:  cobra.ExactArgs(1),
-		Run:   runAuth,
+		Use:     "auth <token>",
+		Short:   "Authenticate with the EnvTrack service",
+		Args:    cobra.ExactArgs(1),
+		Run:     runAuth,
+		GroupID: "auth",
 	}
 }
 
@@ -30,7 +31,7 @@ func runAuth(cmd *cobra.Command, args []string) {
 	}
 
 	// If the API call succeeds, store the token
-	err = config.SetAuthToken(token)
+	err = config.GlobalConf.SetAuthToken(token)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to store auth token: %v\n", err)
 		return

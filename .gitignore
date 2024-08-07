@@ -22,3 +22,6 @@
 /bin/
 
 /dist/
+
+#EnvTrack config
+.envtrack.yaml

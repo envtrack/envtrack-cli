@@ -3,6 +3,7 @@ package api
 type Organization struct {
 	ID        string             `json:"id"`
 	Name      string             `json:"name"`
+	ShortName string             `json:"shortName"`
 	GithubOrg string             `json:"githubOrg"`
 	Projects  map[string]Project `json:"projects,omitempty"`
 }
@@ -10,6 +11,7 @@ type Organization struct {
 type Project struct {
 	ID           string        `json:"id"`
 	Name         string        `json:"name"`
+	ShortName    string        `json:"shortName"`
 	Environments []Environment `json:"environments"`
 }
 

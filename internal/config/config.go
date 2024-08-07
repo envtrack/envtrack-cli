@@ -22,6 +22,9 @@ var (
 )
 
 func init() {
+	GlobalConf = &globalConfStruct{
+		v: viper.New(),
+	}
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting user home directory: %v\n", err)
@@ -34,55 +37,63 @@ func init() {
 		os.Exit(1)
 	}
 
-	viper.AddConfigPath(configDir)
-	viper.SetConfigType("yaml")
-	viper.SetConfigName(configFileName)
-	viper.SetConfigFile(filepath.Join(configDir, configFileName+".yaml"))
+	GlobalConf.v.AddConfigPath(configDir)
+	GlobalConf.v.SetConfigType("yaml")
+	GlobalConf.v.SetConfigName(configFileName)
+	GlobalConf.v.SetConfigFile(filepath.Join(configDir, configFileName+".yaml"))
 
-	viper.SetDefault("api_endpoint", defaultAPIEndpoint)
+	GlobalConf.v.SetDefault("api_endpoint", defaultAPIEndpoint)
 
-	if err := viper.ReadInConfig(); err != nil {
+	if err := GlobalConf.v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			viper.WriteConfig()
+			GlobalConf.v.WriteConfig()
 		}
 	}
 }
 
-func SetConfig(key, value string) error {
+type globalConfStruct struct {
+	v *viper.Viper
+}
+
+var GlobalConf = &globalConfStruct{}
+
+func (c *globalConfStruct) Set(key, value string) error {
 	viper.Set(key, value)
 	return viper.WriteConfig()
 }
 
-func GetConfig(key string) string {
+func (c *globalConfStruct) Get(key string) string {
 	return viper.GetString(key)
 }
 
-func SetAuthToken(token string) error {
+func (c *globalConfStruct) SetAuthToken(token string) error {
 	return keyring.Set(appName, authTokenKey, token)
 }
 
-func GetAuthToken() (string, error) {
+func (c *globalConfStruct) GetAuthToken() (string, error) {
 	return keyring.Get(appName, authTokenKey)
 }
 
+type envtrackContextKey string
+
 const (
-	defaultFormatKey = "default_format"
-	outputFormatKey  = "output_format"
+	defaultFormatKey envtrackContextKey = "default_format"
+	outputFormatKey  envtrackContextKey = "output_format"
 )
 
-func SetDefaultFormat(format string) error {
-	return SetConfig(defaultFormatKey, format)
+func (c *globalConfStruct) SetDefaultFormat(format string) error {
+	return c.Set(string(defaultFormatKey), format)
 }
 
-func GetDefaultFormat() string {
-	return GetConfig(defaultFormatKey)
+func (c *globalConfStruct) GetDefaultFormat() string {
+	return c.Get(string(defaultFormatKey))
 }
 
-func WithOutputFormat(ctx context.Context, format string) context.Context {
+func (c *globalConfStruct) WithOutputFormat(ctx context.Context, format string) context.Context {
 	return context.WithValue(ctx, outputFormatKey, format)
 }
 
-func GetOutputFormat(ctx context.Context) string {
+func (c *globalConfStruct) GetOutputFormat(ctx context.Context) string {
 	if format, ok := ctx.Value(outputFormatKey).(string); ok {
 		return format
 	}

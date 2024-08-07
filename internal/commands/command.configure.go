@@ -7,11 +7,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func ConfigureCommand() *cobra.Command {
+func configureCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "configure",
-		Short: "Configure EnvTrack CLI settings",
-		Long:  `Configure EnvTrack CLI settings such as API endpoint and authentication token.`,
+		Use:     "configure",
+		Aliases: []string{"conf"},
+		GroupID: "conf",
+		Short:   "Configure EnvTrack CLI settings",
+		Long:    `Configure EnvTrack CLI settings such as API endpoint and authentication token.`,
 	}
 
 	cmd.AddCommand(
@@ -46,9 +48,9 @@ func runConfigureSet(cmd *cobra.Command, args []string) {
 
 	var err error
 	if key == "auth_token" {
-		err = config.SetAuthToken(value)
+		err = config.GlobalConf.SetAuthToken(value)
 	} else {
-		err = config.SetConfig(key, value)
+		err = config.GlobalConf.Set(key, value)
 	}
 
 	if err != nil {
@@ -66,9 +68,9 @@ func runConfigureGet(cmd *cobra.Command, args []string) {
 	var err error
 
 	if key == "auth_token" {
-		value, err = config.GetAuthToken()
+		value, err = config.GlobalConf.GetAuthToken()
 	} else {
-		value = config.GetConfig(key)
+		value = config.GlobalConf.Get(key)
 	}
 
 	if err != nil {

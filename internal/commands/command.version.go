@@ -20,7 +20,6 @@ var (
 
 func init() {
 	if info, ok := debug.ReadBuildInfo(); ok {
-		// log info.Settings
 		for _, setting := range info.Settings {
 			switch setting.Key {
 			case "vcs.revision":
@@ -32,14 +31,16 @@ func init() {
 	}
 }
 
-func VersionCommand() *cobra.Command {
+func versionCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "version",
-		Short: "Print the version number of EnvTrack CLI",
-		Long:  `All software has versions. This is EnvTrack's`,
-		Run:   runVersion,
+		Use:     "version",
+		Aliases: []string{"v"},
+		GroupID: "help",
+		Short:   "Print the version number of EnvTrack CLI",
+		Long:    `All software has versions. This is EnvTrack's`,
+		Run:     runVersion,
 	}
-	cmd.Flags().Bool("short", false, "Print just the version number")
+	cmd.Flags().BoolP("short", "s", true, "Print just the version number")
 
 	return cmd
 }
@@ -64,8 +65,5 @@ func runVersion(cmd *cobra.Command, args []string) {
 		return
 	}
 	formattedOutput, _ := formatter.Format(data)
-	fmt.Printf(formattedOutput)
-	// fmt.Printf("EnvTrack CLI v%s\n", Version)
-	// fmt.Printf("Git Commit: %s\n", CommitHash)
-	// fmt.Printf("Build Time: %s\n", VersionTime)
+	fmt.Print(formattedOutput)
 }
