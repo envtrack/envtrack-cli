@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -96,7 +95,6 @@ func (c *localConfStruct) addToGitignore(filename string) error {
 	gitignorePath := ".gitignore"
 
 	if _, err := os.Stat(gitignorePath); os.IsNotExist(err) {
-		log.Print(".gitignore doesn't exist, so we don't need to modify it")
 		return nil // .gitignore doesn't exist, so we don't need to modify it
 	}
 
