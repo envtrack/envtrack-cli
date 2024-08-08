@@ -6,9 +6,14 @@ EnvTrack CLI - Manage your EnvTrack resources
 
 EnvTrack CLI is a command-line tool for interacting with the EnvTrack service.
 
+```
+envtrack [flags]
+```
+
 ### Options
 
 ```
+  -d, --documentation   Generate documentation
   -f, --format string   Output format (json, yaml, csv, bash)
   -h, --help            help for envtrack
 ```
@@ -16,6 +21,7 @@ EnvTrack CLI is a command-line tool for interacting with the EnvTrack service.
 ### SEE ALSO
 
 * [envtrack auth](envtrack_auth.md)	 - Authenticate with the EnvTrack service
+* [envtrack completion](envtrack_completion.md)	 - Generate the autocompletion script for the specified shell
 * [envtrack configure](envtrack_configure.md)	 - Configure EnvTrack CLI settings
 * [envtrack context](envtrack_context.md)	 - Display or manage local EnvTrack context
 * [envtrack environments](envtrack_environments.md)	 - List environments for a given project
