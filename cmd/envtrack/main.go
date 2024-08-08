@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/envtrack/envtrack-cli/internal/commands"
 	"github.com/envtrack/envtrack-cli/internal/config"
 	"github.com/spf13/cobra"
+	"github.com/spf13/cobra/doc"
 )
 
 func main() {
@@ -30,6 +32,11 @@ func main() {
 	rootCmd.PersistentFlags().StringP("format", "f", "", "Output format (json, yaml, csv, bash)")
 
 	commands.AddCommands(rootCmd)
+
+	err := doc.GenMarkdownTree(rootCmd, "./docs")
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
