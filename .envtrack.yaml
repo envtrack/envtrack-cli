@@ -1,0 +1,38 @@
+environments:
+    - id: ""
+      name: local
+      shortName: local
+      variables: []
+      secrets: []
+      isselected: false
+    - id: ""
+      name: prod
+      shortName: prod
+      variables: []
+      secrets: []
+      isselected: false
+    - id: ""
+      name: qa
+      shortName: qa
+      variables:
+        - name: test
+          value: "1"
+        - name: c
+          value: "3"
+        - name: a
+          value: asd
+        - name: b
+          value: cracan
+      secrets:
+        - name: pass1
+          value: d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1
+      isselected: true
+organization:
+    id: 2213c1cf-0135-4443-988d-88c65cd4f3e1
+    name: envtrack
+    shortName: envtrack
+project:
+    id: pft8zZPybp8O5wFnwO1U
+    name: envtrack-cli
+    shortName: envtrack-cli
+selectedenv: qa

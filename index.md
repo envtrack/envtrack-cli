@@ -82,7 +82,7 @@ docker run envtrack/envtrack-cli:latest [commands]
 
 ## Documentation
 
-For more detailed information, please check out our [full documentation](https://github.com/envtrack/envtrack-cli/wiki).
+For more detailed information, please check out our [full documentation](docs/envtrack.md) or [the wiki](https://github.com/envtrack/envtrack-cli/wiki).
 
 ## Contributing
 
