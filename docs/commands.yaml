@@ -1,0 +1,517 @@
+name: envtrack
+synopsis: EnvTrack CLI - Manage your EnvTrack resources
+description: |
+    EnvTrack CLI is a command-line tool for interacting with the EnvTrack service.
+options:
+    - name: format
+      shorthand: f
+      usage: Output format (json, yaml, csv, bash)
+    - name: help
+      shorthand: h
+      default_value: "false"
+      usage: help for envtrack
+sub_commands:
+    - name: envtrack auth
+      synopsis: Authenticate with the EnvTrack service
+      usage: envtrack auth <token> [flags]
+      options:
+        - name: help
+          shorthand: h
+          default_value: "false"
+          usage: help for auth
+      inherited_options:
+        - name: format
+          shorthand: f
+          usage: Output format (json, yaml, csv, bash)
+    - name: envtrack configure
+      synopsis: Configure EnvTrack CLI settings
+      description: |
+        Configure EnvTrack CLI settings such as API endpoint and authentication token.
+      options:
+        - name: help
+          shorthand: h
+          default_value: "false"
+          usage: help for configure
+      inherited_options:
+        - name: format
+          shorthand: f
+          usage: Output format (json, yaml, csv, bash)
+      sub_commands:
+        - name: envtrack configure get
+          synopsis: Get a configuration value
+          usage: envtrack configure get <key> [flags]
+          options:
+            - name: help
+              shorthand: h
+              default_value: "false"
+              usage: help for get
+          inherited_options:
+            - name: format
+              shorthand: f
+              usage: Output format (json, yaml, csv, bash)
+        - name: envtrack configure set
+          synopsis: Set a configuration value
+          usage: envtrack configure set <key> <value> [flags]
+          options:
+            - name: help
+              shorthand: h
+              default_value: "false"
+              usage: help for set
+          inherited_options:
+            - name: format
+              shorthand: f
+              usage: Output format (json, yaml, csv, bash)
+    - name: envtrack context
+      synopsis: Display or manage local EnvTrack context
+      usage: envtrack context [flags]
+      options:
+        - name: help
+          shorthand: h
+          default_value: "false"
+          usage: help for context
+      inherited_options:
+        - name: format
+          shorthand: f
+          usage: Output format (json, yaml, csv, bash)
+      sub_commands:
+        - name: envtrack context environments
+          synopsis: Display local environment information
+          usage: envtrack context environments <name> [flags]
+          options:
+            - name: help
+              shorthand: h
+              default_value: "false"
+              usage: help for environments
+            - name: reload
+              shorthand: r
+              default_value: "false"
+              usage: Reload local environments from the server.
+          inherited_options:
+            - name: format
+              shorthand: f
+              usage: Output format (json, yaml, csv, bash)
+          sub_commands:
+            - name: envtrack context environments add
+              synopsis: Add a new environment to the local configuration
+              usage: envtrack context environments add [flags]
+              options:
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for add
+                - name: local
+                  default_value: "false"
+                  usage: Add environment locally without syncing to server
+                - name: name
+                  shorthand: "n"
+                  usage: Name of the environment
+                - name: shortname
+                  shorthand: s
+                  usage: Short name of the environment
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+            - name: envtrack context environments list
+              synopsis: List environments for the local project
+              usage: envtrack context environments list [flags]
+              options:
+                - name: environment
+                  shorthand: e
+                  usage: |
+                    Environment name or shortname (required if no environment is selected)
+                - name: filter
+                  default_value: '[]'
+                  usage: |
+                    Filter environments (key=value pairs, can be used multiple times)
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for list
+                - name: reload
+                  shorthand: r
+                  default_value: "false"
+                  usage: |-
+                    Reload variables from the serverAvailable fields: name, shortname, isSelected, variablesCount, secretsCount
+                    String fields will use contains, boolean fields will use exact match, integer fields will use greater than or equal
+                    Example: envtrack ctx env list --filter name=production
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+            - name: envtrack context environments mark
+              synopsis: Mark an environment as selected
+              usage: envtrack context environments mark <environment> [flags]
+              options:
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for mark
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+        - name: envtrack context init
+          synopsis: Initialize a local EnvTrack project
+          usage: envtrack context init [flags]
+          options:
+            - name: force
+              default_value: "false"
+              usage: |
+                Force initialization even if local project is already initialized
+            - name: help
+              shorthand: h
+              default_value: "false"
+              usage: help for init
+            - name: local
+              shorthand: l
+              default_value: "false"
+              usage: |
+                Initialize a local project without getting data from the server
+            - name: organization
+              shorthand: o
+              usage: ID or shortname of the organization
+            - name: organizationName
+              usage: |
+                Name of the organization (to be used with local, disregarded if project is loaded from server)
+            - name: organizationShortName
+              usage: |
+                Shortname of the organization (to be used with local, disregarded if project is loaded from server)
+            - name: project
+              shorthand: p
+              usage: ID or shortname of the project
+            - name: projectName
+              usage: |
+                Name of the project (to be used with local, disregarded if project is loaded from server)
+            - name: projectShortName
+              usage: |
+                Shortname of the project (to be used with local, disregarded if project is loaded from server)
+          inherited_options:
+            - name: format
+              shorthand: f
+              usage: Output format (json, yaml, csv, bash)
+        - name: envtrack context secrets
+          synopsis: Manage environment secrets
+          options:
+            - name: help
+              shorthand: h
+              default_value: "false"
+              usage: help for secrets
+          inherited_options:
+            - name: format
+              shorthand: f
+              usage: Output format (json, yaml, csv, bash)
+          sub_commands:
+            - name: envtrack context secrets add
+              synopsis: Add new secret(s) to an environment
+              usage: envtrack context secrets add [flags]
+              options:
+                - name: environment
+                  shorthand: e
+                  usage: |
+                    Environment name or shortname (required if no environment is selected)
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for add
+                - name: local
+                  default_value: "false"
+                  usage: Add secret(s) locally without syncing to server
+                - name: overwrite
+                  shorthand: w
+                  default_value: "false"
+                  usage: Overwrite secret if it already exists
+                - name: secret
+                  shorthand: s
+                  default_value: '[]'
+                  usage: |
+                    Secret(s) to add in key=value format (can be used multiple times)
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+            - name: envtrack context secrets get
+              synopsis: Get secrets for the selected environment
+              usage: envtrack context secrets get <name> [flags]
+              options:
+                - name: environment
+                  shorthand: e
+                  usage: |
+                    Environment name or shortname (required if no environment is selected)
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for get
+                - name: reload
+                  shorthand: r
+                  default_value: "false"
+                  usage: Reload secrets from the server
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+            - name: envtrack context secrets list
+              synopsis: List secrets for an environment
+              usage: envtrack context secrets list [flags]
+              options:
+                - name: environment
+                  shorthand: e
+                  usage: |
+                    Environment name or shortname (required if no environment is selected)
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for list
+                - name: reload
+                  shorthand: r
+                  default_value: "false"
+                  usage: Reload secrets from the server
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+            - name: envtrack context secrets remove
+              synopsis: Remove secret(s) from an environment
+              usage: envtrack context secrets remove [flags]
+              options:
+                - name: environment
+                  shorthand: e
+                  usage: |
+                    Environment name or shortname (required if no environment is selected)
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for remove
+                - name: local
+                  default_value: "false"
+                  usage: Remove secret(s) locally without syncing to server
+                - name: name
+                  shorthand: "n"
+                  default_value: '[]'
+                  usage: Name(s) of the secret(s) to remove
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+            - name: envtrack context secrets update
+              synopsis: Update or create secret(s) in an environment
+              usage: envtrack context secrets update [flags]
+              options:
+                - name: environment
+                  shorthand: e
+                  usage: |
+                    Environment name or shortname (required if no environment is selected)
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for update
+                - name: local
+                  default_value: "false"
+                  usage: Update secret(s) locally without syncing to server
+                - name: overwrite
+                  shorthand: w
+                  default_value: "false"
+                  usage: Create new secrets if they don't exist
+                - name: secret
+                  shorthand: s
+                  default_value: '[]'
+                  usage: |
+                    Secret(s) to update or create in key=value format (can be used multiple times)
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+        - name: envtrack context variables
+          synopsis: Manage environment variables
+          options:
+            - name: help
+              shorthand: h
+              default_value: "false"
+              usage: help for variables
+          inherited_options:
+            - name: format
+              shorthand: f
+              usage: Output format (json, yaml, csv, bash)
+          sub_commands:
+            - name: envtrack context variables add
+              synopsis: Add new variable(s) to an environment
+              usage: envtrack context variables add [flags]
+              options:
+                - name: environment
+                  shorthand: e
+                  usage: |
+                    Environment name or shortname (required if no environment is selected)
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for add
+                - name: local
+                  default_value: "false"
+                  usage: Add variable(s) locally without syncing to server
+                - name: overwrite
+                  shorthand: w
+                  default_value: "false"
+                  usage: Overwrite variable if it already exists
+                - name: var
+                  shorthand: v
+                  default_value: '[]'
+                  usage: |
+                    Variable(s) to add in key=value format (can be used multiple times)
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+            - name: envtrack context variables list
+              synopsis: List variables for an environment
+              usage: envtrack context variables list [flags]
+              options:
+                - name: environment
+                  shorthand: e
+                  usage: |
+                    Environment name or shortname (required if no environment is selected)
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for list
+                - name: reload
+                  shorthand: r
+                  default_value: "false"
+                  usage: Reload variables from the server
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+            - name: envtrack context variables remove
+              synopsis: Remove variable(s) from an environment
+              usage: envtrack context variables remove [flags]
+              options:
+                - name: environment
+                  shorthand: e
+                  usage: |
+                    Environment name or shortname (required if no environment is selected)
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for remove
+                - name: local
+                  default_value: "false"
+                  usage: Remove variable(s) locally without syncing to server
+                - name: name
+                  shorthand: "n"
+                  default_value: '[]'
+                  usage: Name(s) of the variable(s) to remove
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+            - name: envtrack context variables update
+              synopsis: Update or create variable(s) in an environment
+              usage: envtrack context variables update [flags]
+              options:
+                - name: environment
+                  shorthand: e
+                  usage: |
+                    Environment name or shortname (required if no environment is selected)
+                - name: help
+                  shorthand: h
+                  default_value: "false"
+                  usage: help for update
+                - name: local
+                  default_value: "false"
+                  usage: Update variable(s) locally without syncing to server
+                - name: overwrite
+                  shorthand: w
+                  default_value: "false"
+                  usage: Create new variables if they don't exist
+                - name: var
+                  shorthand: v
+                  default_value: '[]'
+                  usage: |
+                    Variable(s) to update or create in key=value format (can be used multiple times)
+              inherited_options:
+                - name: format
+                  shorthand: f
+                  usage: Output format (json, yaml, csv, bash)
+    - name: envtrack environments
+      synopsis: List environments for a given project
+      usage: envtrack environments [flags]
+      options:
+        - name: help
+          shorthand: h
+          default_value: "false"
+          usage: help for environments
+        - name: organization
+          shorthand: o
+          usage: ID or shortname of the organization
+        - name: project
+          shorthand: p
+          usage: ID or shortname of the project
+      inherited_options:
+        - name: format
+          shorthand: f
+          usage: Output format (json, yaml, csv, bash)
+    - name: envtrack organizations
+      synopsis: List organizations
+      usage: envtrack organizations [flags]
+      options:
+        - name: help
+          shorthand: h
+          default_value: "false"
+          usage: help for organizations
+      inherited_options:
+        - name: format
+          shorthand: f
+          usage: Output format (json, yaml, csv, bash)
+    - name: envtrack projects
+      synopsis: List projects for a given organization
+      usage: envtrack projects [flags]
+      options:
+        - name: help
+          shorthand: h
+          default_value: "false"
+          usage: help for projects
+        - name: organization
+          shorthand: o
+          usage: ID or shortname of the organization
+      inherited_options:
+        - name: format
+          shorthand: f
+          usage: Output format (json, yaml, csv, bash)
+    - name: envtrack variables
+      synopsis: List variables for a given environment
+      usage: envtrack variables [flags]
+      options:
+        - name: environment
+          shorthand: e
+          usage: ID or shortname of the environment
+        - name: help
+          shorthand: h
+          default_value: "false"
+          usage: help for variables
+        - name: organization
+          shorthand: o
+          usage: ID or shortname of the organization
+        - name: project
+          shorthand: p
+          usage: ID or shortname of the project
+      inherited_options:
+        - name: format
+          shorthand: f
+          usage: Output format (json, yaml, csv, bash)
+    - name: envtrack version
+      synopsis: Print the version number of EnvTrack CLI
+      description: All software has versions. This is EnvTrack's
+      usage: envtrack version [flags]
+      options:
+        - name: help
+          shorthand: h
+          default_value: "false"
+          usage: help for version
+        - name: short
+          shorthand: s
+          default_value: "true"
+          usage: Print just the version number
+      inherited_options:
+        - name: format
+          shorthand: f
+          usage: Output format (json, yaml, csv, bash)

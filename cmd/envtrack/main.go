@@ -7,6 +7,7 @@ import (
 
 	"github.com/envtrack/envtrack-cli/internal/commands"
 	"github.com/envtrack/envtrack-cli/internal/config"
+	"github.com/envtrack/envtrack-cli/internal/generators"
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
 )
@@ -34,6 +35,15 @@ func main() {
 	commands.AddCommands(rootCmd)
 
 	err := doc.GenMarkdownTree(rootCmd, "./docs")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = generators.GenYamlAllFile(rootCmd, "./docs/commands.yaml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = generators.GenYamlAllBasicFile(rootCmd, "./docs/commands_short.yaml")
 	if err != nil {
 		log.Fatal(err)
 	}

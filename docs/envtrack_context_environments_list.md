@@ -10,13 +10,12 @@ envtrack context environments list [flags]
 
 ```
   -e, --environment string      Environment name or shortname (required if no environment is selected)
-  -h, --help                    help for list
-  -r, --reload                  Reload variables from the server
+                                
       --filter stringToString   Filter environments (key=value pairs, can be used multiple times) (default [])
-
-Available fields: name, shortname, isSelected, variablesCount, secretsCount
-String fields will use contains, boolean fields will use exact match, integer fields will use greater than or equal
-Example: envtrack ctx env list --filter name=production
+  -h, --help                    help for list
+  -r, --reload                  Reload variables from the serverAvailable fields: name, shortname, isSelected, variablesCount, secretsCount
+                                String fields will use contains, boolean fields will use exact match, integer fields will use greater than or equal
+                                Example: envtrack ctx env list --filter name=production
 ```
 
 ### Options inherited from parent commands
