@@ -1,4 +1,4 @@
-package commands
+package conf
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func configureCommand() *cobra.Command {
+func ConfigureCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "configure",
 		Aliases: []string{"conf"},
@@ -49,6 +49,8 @@ func runConfigureSet(cmd *cobra.Command, args []string) {
 	var err error
 	if key == "auth_token" {
 		err = config.GlobalConf.SetAuthToken(value)
+	} else if key == "format" {
+		err = config.GlobalConf.SetDefaultFormat(value)
 	} else {
 		err = config.GlobalConf.Set(key, value)
 	}
@@ -69,6 +71,8 @@ func runConfigureGet(cmd *cobra.Command, args []string) {
 
 	if key == "auth_token" {
 		value, err = config.GlobalConf.GetAuthToken()
+	} else if key == "format" {
+		value = config.GlobalConf.GetDefaultFormat()
 	} else {
 		value = config.GlobalConf.Get(key)
 	}

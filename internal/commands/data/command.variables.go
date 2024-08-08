@@ -1,20 +1,21 @@
-package commands
+package data
 
 import (
 	"fmt"
 
 	"github.com/envtrack/envtrack-cli/internal/api"
+	"github.com/envtrack/envtrack-cli/internal/common"
 	"github.com/envtrack/envtrack-cli/internal/config"
 	"github.com/spf13/cobra"
 )
 
-func variablesCommand() *cobra.Command {
+func VariablesCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "variables",
 		Aliases: []string{"var"},
 		GroupID: "data",
 		Short:   "List variables for a given environment",
-		Run:     requireAuth(runVariables),
+		Run:     common.RequireAuth(runVariables),
 	}
 	cmd.Flags().StringP("organization", "o", "", "ID or shortname of the organization")
 	cmd.Flags().StringP("project", "p", "", "ID or shortname of the project")
@@ -39,7 +40,7 @@ func runVariables(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	formatter, err := getFormatter(cmd.Context())
+	formatter, err := common.GetFormatter(cmd.Context())
 	if err != nil {
 		fmt.Printf("Error getting formatter: %v\n", err)
 		return

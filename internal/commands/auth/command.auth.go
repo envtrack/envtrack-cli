@@ -1,4 +1,4 @@
-package commands
+package auth
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func authCommand() *cobra.Command {
+func AuthCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:     "auth <token>",
 		Short:   "Authenticate with the EnvTrack service",

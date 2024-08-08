@@ -18,6 +18,7 @@ type Project struct {
 type Environment struct {
 	ID        string     `json:"id"`
 	Name      string     `json:"name"`
+	ShortName string     `json:"shortName"`
 	Variables []Variable `json:"variables"`
 }
 

@@ -6,6 +6,10 @@ import (
 	"strings"
 
 	"github.com/spf13/viper"
+	"github.com/zalando/go-keyring"
+
+	"crypto/sha256"
+	"encoding/hex"
 )
 
 const (
@@ -19,8 +23,29 @@ type localConfStruct struct {
 var LocalConf localConfStruct
 
 type LocalConfigParams struct {
-	Organization LocalConfigOrganization `json:"organization"`
-	Project      LocalConfigProject      `json:"project"`
+	Organization LocalConfigOrganization  `json:"organization"`
+	Project      LocalConfigProject       `json:"project"`
+	Environments []LocalConfigEnvironment `json:"environments"`
+	SelectedEnv  string                   `json:"selectedEnv"`
+}
+
+type LocalConfigEnvironment struct {
+	ID         string                `json:"id"`
+	Name       string                `json:"name"`
+	ShortName  string                `json:"shortName" yaml:"shortName"`
+	Variables  []LocalConfigVariable `json:"variables"`
+	Secrets    []LocalConfigSecret   `json:"secrets"`
+	IsSelected bool                  `json:"isSelected"`
+}
+
+type LocalConfigVariable struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+type LocalConfigSecret struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
 type LocalConfigOrganization struct {
@@ -60,13 +85,37 @@ func (c *localConfStruct) Get(key string) string {
 	return viper.GetString(key)
 }
 
+func (c *localConfStruct) SetSecretWithSimpleKey(key, value string) (string, error) {
+	hash := generateHash(key)
+	err := keyring.Set(appName, hash, value)
+	if err != nil {
+		return "", fmt.Errorf("error setting secret: %w", err)
+	}
+	return hash, nil
+}
+
+func (c *localConfStruct) SetSecret(key, value string) error {
+	return keyring.Set(appName, key, value)
+}
+
+func (c *localConfStruct) GetSecret(key string) (string, error) {
+	return keyring.Get(appName, key)
+}
+
+func (c *localConfStruct) DeleteSecret(key string) error {
+	return keyring.Delete(appName, key)
+}
+
+func generateHash(key string) string {
+	hash := sha256.Sum256([]byte(key))
+	return hex.EncodeToString(hash[:])
+}
+
 func (c *localConfStruct) SaveLocalConfig(config LocalConfigParams) error {
-	c.v.Set("organization.id", config.Organization.ID)
-	c.v.Set("project.id", config.Project.ID)
-	c.v.Set("organization.name", config.Organization.Name)
-	c.v.Set("project.name", config.Project.Name)
-	c.v.Set("organization.shortName", config.Organization.ShortName)
-	c.v.Set("project.shortName", config.Project.ShortName)
+	c.v.Set("organization", config.Organization)
+	c.v.Set("project", config.Project)
+	c.v.Set("environments", config.Environments)
+	c.v.Set("selectedEnv", config.SelectedEnv)
 
 	err := c.v.WriteConfig()
 	if err != nil {

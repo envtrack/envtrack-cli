@@ -1,4 +1,4 @@
-package commands
+package initialize
 
 import (
 	"fmt"
@@ -8,10 +8,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func initCommand() *cobra.Command {
+func InitCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "init",
-		GroupID: "local_project",
 		Short:   "Initialize a local EnvTrack project",
 		Run:     runInit,
 		PreRunE: validateInitFlags,
@@ -23,6 +22,7 @@ func initCommand() *cobra.Command {
 	cmd.Flags().String("organizationName", "", "Name of the organization (to be used with local, disregarded if project is loaded from server)")
 	cmd.Flags().String("organizationShortName", "", "Shortname of the organization (to be used with local, disregarded if project is loaded from server)")
 	cmd.Flags().BoolP("local", "l", false, "Initialize a local project without getting data from the server")
+	cmd.Flags().Bool("force", false, "Force initialization even if local project is already initialized")
 	cmd.MarkFlagRequired("organization")
 	cmd.MarkFlagRequired("project")
 	return cmd
@@ -35,6 +35,12 @@ func runInit(cmd *cobra.Command, args []string) {
 	orgShortName, _ := cmd.Flags().GetString("organizationShortName")
 	projName, _ := cmd.Flags().GetString("projectName")
 	projShortName, _ := cmd.Flags().GetString("projectShortName")
+
+	localCfg, err := config.LocalConf.GetLocalConfig()
+	if err == nil && localCfg != nil && localCfg.Project.ID != "" && localCfg.Organization.ID != "" {
+		fmt.Printf("Local project already initialized for \"%s\"/\"%s\"\n", localCfg.Organization.ShortName, localCfg.Project.ShortName)
+		return
+	}
 
 	local, _ := cmd.Flags().GetBool("local")
 	if !local {
@@ -53,12 +59,6 @@ func runInit(cmd *cobra.Command, args []string) {
 		orgShortName = organization.ShortName
 		projName = project.Name
 		projShortName = project.ShortName
-	}
-
-	localCfg, err := config.LocalConf.GetLocalConfig()
-	if err == nil && localCfg.Project.ID != "" && localCfg.Organization.ID != "" {
-		fmt.Printf("Local project already initialized for \"%s\"/\"%s\"\n", localCfg.Organization.ShortName, localCfg.Project.ShortName)
-		return
 	}
 
 	err = config.LocalConf.SaveLocalConfig(config.LocalConfigParams{

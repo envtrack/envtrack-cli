@@ -58,12 +58,12 @@ type globalConfStruct struct {
 var GlobalConf = &globalConfStruct{}
 
 func (c *globalConfStruct) Set(key, value string) error {
-	viper.Set(key, value)
-	return viper.WriteConfig()
+	c.v.Set(key, value)
+	return c.v.WriteConfig()
 }
 
 func (c *globalConfStruct) Get(key string) string {
-	return viper.GetString(key)
+	return c.v.GetString(key)
 }
 
 func (c *globalConfStruct) SetAuthToken(token string) error {

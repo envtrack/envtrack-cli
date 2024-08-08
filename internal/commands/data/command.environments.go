@@ -1,39 +1,43 @@
-package commands
+package data
 
 import (
 	"fmt"
 
 	"github.com/envtrack/envtrack-cli/internal/api"
+	"github.com/envtrack/envtrack-cli/internal/common"
 	"github.com/envtrack/envtrack-cli/internal/config"
 	"github.com/spf13/cobra"
 )
 
-func projectsCommand() *cobra.Command {
+func EnvironmentsCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "projects",
-		Aliases: []string{"prj"},
+		Use:     "environments",
+		Aliases: []string{"env"},
 		GroupID: "data",
-		Short:   "List projects for a given organization",
-		Run:     requireAuth(runProjects),
+		Short:   "List environments for a given project",
+		Run:     common.RequireAuth(runEnvironments),
 	}
 	cmd.Flags().StringP("organization", "o", "", "ID or shortname of the organization")
+	cmd.Flags().StringP("project", "p", "", "ID or shortname of the project")
 	cmd.MarkFlagRequired("organization")
+	cmd.MarkFlagRequired("project")
 	return cmd
 }
 
-func runProjects(cmd *cobra.Command, args []string) {
+func runEnvironments(cmd *cobra.Command, args []string) {
 	orgID, _ := cmd.Flags().GetString("organization")
+	projID, _ := cmd.Flags().GetString("project")
 
 	token, _ := config.GlobalConf.GetAuthToken() // Error already checked in requireAuth
 	client := api.NewClient(token)
 
-	orgs, err := client.GetProjects(orgID)
+	orgs, err := client.GetEnvironments(orgID, projID)
 	if err != nil {
 		fmt.Printf("Error fetching organizations: %v\n", err)
 		return
 	}
 
-	formatter, err := getFormatter(cmd.Context())
+	formatter, err := common.GetFormatter(cmd.Context())
 	if err != nil {
 		fmt.Printf("Error getting formatter: %v\n", err)
 		return

@@ -1,22 +1,13 @@
 package commands
 
 import (
-	"fmt"
-
-	"github.com/envtrack/envtrack-cli/internal/config"
+	"github.com/envtrack/envtrack-cli/internal/commands/auth"
+	"github.com/envtrack/envtrack-cli/internal/commands/conf"
+	"github.com/envtrack/envtrack-cli/internal/commands/data"
+	"github.com/envtrack/envtrack-cli/internal/commands/help"
+	"github.com/envtrack/envtrack-cli/internal/commands/local_project"
 	"github.com/spf13/cobra"
 )
-
-func requireAuth(run func(cmd *cobra.Command, args []string)) func(cmd *cobra.Command, args []string) {
-	return func(cmd *cobra.Command, args []string) {
-		token, err := config.GlobalConf.GetAuthToken()
-		if err != nil || token == "" {
-			fmt.Println("Authentication required. Please run 'envtrack auth <token>' to authenticate.")
-			return
-		}
-		run(cmd, args)
-	}
-}
 
 func AddCommands(rootCmd *cobra.Command) {
 	rootCmd.AddGroup(
@@ -27,13 +18,13 @@ func AddCommands(rootCmd *cobra.Command) {
 		&cobra.Group{ID: "help", Title: "Help commands"},
 	)
 	rootCmd.AddCommand(
-		authCommand(),
-		organizationsCommand(),
-		projectsCommand(),
-		environmentsCommand(),
-		variablesCommand(),
-		configureCommand(),
-		versionCommand(),
-		initCommand(),
+		auth.AuthCommand(),
+		data.OrganizationsCommand(),
+		data.ProjectsCommand(),
+		data.EnvironmentsCommand(),
+		data.VariablesCommand(),
+		conf.ConfigureCommand(),
+		help.VersionCommand(),
+		local_project.LocalContextCommand(),
 	)
 }

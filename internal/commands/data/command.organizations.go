@@ -1,20 +1,21 @@
-package commands
+package data
 
 import (
 	"fmt"
 
 	"github.com/envtrack/envtrack-cli/internal/api"
+	"github.com/envtrack/envtrack-cli/internal/common"
 	"github.com/envtrack/envtrack-cli/internal/config"
 	"github.com/spf13/cobra"
 )
 
-func organizationsCommand() *cobra.Command {
+func OrganizationsCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:     "organizations",
 		Aliases: []string{"org"},
 		GroupID: "data",
 		Short:   "List organizations",
-		Run:     requireAuth(runOrganizations),
+		Run:     common.RequireAuth(runOrganizations),
 	}
 }
 
@@ -28,7 +29,7 @@ func runOrganizations(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	formatter, err := getFormatter(cmd.Context())
+	formatter, err := common.GetFormatter(cmd.Context())
 	if err != nil {
 		fmt.Printf("Error getting formatter: %v\n", err)
 		return

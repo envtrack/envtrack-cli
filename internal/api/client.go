@@ -191,3 +191,45 @@ func (c *Client) GetVariables(orgID, projectID, envID string) ([]Variable, error
 
 	return nil, fmt.Errorf("environment not found")
 }
+
+func (c *Client) DeleteSecret(orgID, projectID, environmentID, name string) error {
+	return fmt.Errorf("not implemented")
+}
+
+func (c *Client) CreateSecret(orgID, projectID, environmentID, name, value string) (*Variable, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
+func (c *Client) DeleteVariable(orgID, projectID, environmentID, name string) error {
+	return fmt.Errorf("not implemented")
+}
+
+func (c *Client) UpdateVariable(orgID, projectID, environmentID, name, value string) (*Variable, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
+func (c *Client) CreateVariable(orgID, projectID, environmentID, name, value string) (*Variable, error) {
+	return nil, fmt.Errorf("not implemented")
+}
+
+func (c *Client) CreateEnvironment(orgID, projectID, name, shortName string) (*Environment, error) {
+	return nil, fmt.Errorf("not implemented")
+	// query := url.Values{}
+	// query.Set("orgId", orgID)
+	// query.Set("prjId", projectID)
+	// query.Set("name", name)
+	// query.Set("shortName", shortName)
+
+	// body, err := c.sendRequest("POST", "/callableGetEnvs", query)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// var env Environment
+	// err = json.Unmarshal(body, &env)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// return &env, nil
+}

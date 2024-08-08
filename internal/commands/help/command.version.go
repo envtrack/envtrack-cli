@@ -1,9 +1,10 @@
-package commands
+package help
 
 import (
 	"fmt"
 	"runtime/debug"
 
+	"github.com/envtrack/envtrack-cli/internal/common"
 	"github.com/spf13/cobra"
 )
 
@@ -31,7 +32,7 @@ func init() {
 	}
 }
 
-func versionCommand() *cobra.Command {
+func VersionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "version",
 		Aliases: []string{"v"},
@@ -59,7 +60,7 @@ func runVersion(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	formatter, err := getFormatter(cmd.Context())
+	formatter, err := common.GetFormatter(cmd.Context())
 	if err != nil {
 		fmt.Printf("Error getting formatter: %v\n", err)
 		return

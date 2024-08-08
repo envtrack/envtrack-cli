@@ -18,7 +18,7 @@ func main() {
 			// Set the output format from flag or config
 			format, _ := cmd.Flags().GetString("format")
 			if format == "" {
-				format = config.GlobalConf.Get("default_format")
+				format = config.GlobalConf.GetDefaultFormat()
 			}
 			if format == "" {
 				format = "json" // Default to JSON if not set
