@@ -1,0 +1,10 @@
+name="John Doe"
+age=30
+address_street="123 Main St"
+address_city="New York"
+address_state="NY"
+address_zip="10001"
+skills=("JavaScript" "Python" "Java")
+education_degree="Bachelor's"
+education_major="Computer Science"
+education_university="ABC University"

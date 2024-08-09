@@ -22,44 +22,6 @@ type localConfStruct struct {
 
 var LocalConf localConfStruct
 
-type LocalConfigParams struct {
-	Organization LocalConfigOrganization  `json:"organization"`
-	Project      LocalConfigProject       `json:"project"`
-	Environments []LocalConfigEnvironment `json:"environments"`
-	SelectedEnv  string                   `json:"selectedEnv"`
-}
-
-type LocalConfigEnvironment struct {
-	ID         string                `json:"id"`
-	Name       string                `json:"name"`
-	ShortName  string                `json:"shortName" yaml:"shortName"`
-	Variables  []LocalConfigVariable `json:"variables"`
-	Secrets    []LocalConfigSecret   `json:"secrets"`
-	IsSelected bool                  `json:"isSelected"`
-}
-
-type LocalConfigVariable struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
-}
-
-type LocalConfigSecret struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
-}
-
-type LocalConfigOrganization struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	ShortName string `json:"shortName" yaml:"shortName"`
-}
-
-type LocalConfigProject struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	ShortName string `json:"shortName" yaml:"shortName"`
-}
-
 func init() {
 	LocalConf = localConfStruct{
 		v: viper.New(),

@@ -70,7 +70,7 @@ func updateSingleVariable(env *config.LocalConfigEnvironment, name, value string
 		return fmt.Errorf("variable '%s' not found in this environment. Use --overwrite to create new variables", name)
 	}
 
-	newVar := config.LocalConfigVariable{
+	newVar := &config.LocalConfigVariable{
 		Name:  name,
 		Value: value,
 	}
@@ -89,7 +89,7 @@ func updateSingleVariable(env *config.LocalConfigEnvironment, name, value string
 		if err != nil {
 			return fmt.Errorf("error updating variable '%s' on server: %v", name, err)
 		}
-		newVar = config.LocalConfigVariable{
+		newVar = &config.LocalConfigVariable{
 			Name:  serverVar.Name,
 			Value: serverVar.Value,
 		}

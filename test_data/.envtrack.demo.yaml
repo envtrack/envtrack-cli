@@ -1,0 +1,23 @@
+environments:
+    - id: ""
+      name: local
+      shortName: lcl
+      variables:
+        - name: email
+          value: cuzzea@gmail.com
+      secrets:
+        - name: password
+          value: 5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8
+      linkedfiles:
+        - path: /Users/vladrotaru/src/envtrack/envtrack-cli/test_data/vars1.yaml
+          alias: v1yaml
+      isselected: true
+organization:
+    id: 2213c1cf-0135-4443-988d-88c65cd4f3e1
+    name: envtrack
+    shortName: envtrack
+project:
+    id: pft8zZPybp8O5wFnwO1U
+    name: envtrack-cli
+    shortName: envtrack-cli
+selectedenv: lcl

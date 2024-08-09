@@ -56,7 +56,7 @@ func runAddEnvironment(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	var newEnv config.LocalConfigEnvironment
+	var newEnv *config.LocalConfigEnvironment
 
 	if !local {
 		// Sync with server
@@ -67,14 +67,14 @@ func runAddEnvironment(cmd *cobra.Command, args []string) {
 			fmt.Printf("Error creating environment on server: %v\n", err)
 			return
 		}
-		newEnv = config.LocalConfigEnvironment{
+		newEnv = &config.LocalConfigEnvironment{
 			ID:        serverEnv.ID,
 			Name:      serverEnv.Name,
 			ShortName: serverEnv.ShortName,
 		}
 	} else {
 		// Local only
-		newEnv = config.LocalConfigEnvironment{
+		newEnv = &config.LocalConfigEnvironment{
 			ID:        "", // Leave empty for local-only environments
 			Name:      name,
 			ShortName: shortName,

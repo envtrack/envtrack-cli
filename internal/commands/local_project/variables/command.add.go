@@ -62,7 +62,7 @@ func getSelectedEnvironment(localCfg *config.LocalConfigParams, envName string) 
 	if localCfg.SelectedEnv != "" {
 		for i, env := range localCfg.Environments {
 			if env.Name == localCfg.SelectedEnv || env.ShortName == localCfg.SelectedEnv {
-				return &localCfg.Environments[i], nil
+				return localCfg.Environments[i], nil
 			}
 		}
 	}
@@ -73,7 +73,7 @@ func getSelectedEnvironment(localCfg *config.LocalConfigParams, envName string) 
 
 	for i, env := range localCfg.Environments {
 		if env.Name == envName || env.ShortName == envName {
-			return &localCfg.Environments[i], nil
+			return localCfg.Environments[i], nil
 		}
 	}
 
@@ -98,7 +98,7 @@ func addSingleVariable(env *config.LocalConfigEnvironment, name, value string, l
 		}
 	}
 
-	newVar := config.LocalConfigVariable{
+	newVar := &config.LocalConfigVariable{
 		Name:  name,
 		Value: value,
 	}
@@ -111,7 +111,7 @@ func addSingleVariable(env *config.LocalConfigEnvironment, name, value string, l
 		if err != nil {
 			return fmt.Errorf("error creating variable '%s' on server: %v", name, err)
 		}
-		newVar = config.LocalConfigVariable{
+		newVar = &config.LocalConfigVariable{
 			Name:  serverVar.Name,
 			Value: serverVar.Value,
 		}

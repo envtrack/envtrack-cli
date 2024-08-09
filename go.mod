@@ -3,7 +3,10 @@ module github.com/envtrack/envtrack-cli
 go 1.22
 
 require (
+	github.com/cbroglie/mustache v1.4.0
+	github.com/hoisie/mustache v0.0.0-20160804235033-6375acf62c69
 	github.com/spf13/cobra v1.8.1
+	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.19.0
 	github.com/zalando/go-keyring v0.2.5
 	gopkg.in/yaml.v3 v3.0.1
@@ -26,7 +29,6 @@ require (
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect

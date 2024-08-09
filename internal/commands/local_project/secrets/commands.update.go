@@ -82,7 +82,7 @@ func updateSingleSecret(env *config.LocalConfigEnvironment, name, value string, 
 		}
 	}
 
-	newSecret := config.LocalConfigSecret{
+	newSecret := &config.LocalConfigSecret{
 		Name:  name,
 		Value: uniqueKey,
 	}

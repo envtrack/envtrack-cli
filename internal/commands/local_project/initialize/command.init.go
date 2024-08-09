@@ -37,7 +37,7 @@ func runInit(cmd *cobra.Command, args []string) {
 	projShortName, _ := cmd.Flags().GetString("projectShortName")
 
 	localCfg, err := config.LocalConf.GetLocalConfig()
-	if err == nil && localCfg != nil && localCfg.Project.ID != "" && localCfg.Organization.ID != "" {
+	if err == nil && localCfg != nil && localCfg.Project != nil && localCfg.Project.ID != "" && localCfg.Organization != nil && localCfg.Organization.ID != "" {
 		fmt.Printf("Local project already initialized for \"%s\"/\"%s\"\n", localCfg.Organization.ShortName, localCfg.Project.ShortName)
 		return
 	}
@@ -62,12 +62,12 @@ func runInit(cmd *cobra.Command, args []string) {
 	}
 
 	err = config.LocalConf.SaveLocalConfig(config.LocalConfigParams{
-		Project: config.LocalConfigProject{
+		Project: &config.LocalConfigProject{
 			ID:        projID,
 			Name:      projName,
 			ShortName: projShortName,
 		},
-		Organization: config.LocalConfigOrganization{
+		Organization: &config.LocalConfigOrganization{
 			ID:        orgID,
 			Name:      orgName,
 			ShortName: orgShortName,

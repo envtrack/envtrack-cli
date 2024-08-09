@@ -32,7 +32,7 @@ func runListSecrets(cmd *cobra.Command, args []string) error {
 	if localCfg.SelectedEnv != "" {
 		for _, env := range localCfg.Environments {
 			if env.Name == localCfg.SelectedEnv || env.ShortName == localCfg.SelectedEnv {
-				selectedEnv = &env
+				selectedEnv = env
 				break
 			}
 		}
@@ -44,7 +44,7 @@ func runListSecrets(cmd *cobra.Command, args []string) error {
 		}
 		for _, env := range localCfg.Environments {
 			if env.Name == envName || env.ShortName == envName {
-				selectedEnv = &env
+				selectedEnv = env
 				break
 			}
 		}

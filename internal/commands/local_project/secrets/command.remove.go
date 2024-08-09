@@ -57,7 +57,7 @@ func runRemoveSecret(cmd *cobra.Command, args []string) error {
 
 func removeSingleSecret(env *config.LocalConfigEnvironment, name string, local bool, localCfg *config.LocalConfigParams) error {
 	index := -1
-	currentSecret := config.LocalConfigSecret{}
+	currentSecret := &config.LocalConfigSecret{}
 	for i, s := range env.Secrets {
 		if s.Name == name {
 			index = i

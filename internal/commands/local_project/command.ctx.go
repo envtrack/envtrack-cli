@@ -5,7 +5,9 @@ import (
 
 	"github.com/envtrack/envtrack-cli/internal/commands/local_project/env"
 	"github.com/envtrack/envtrack-cli/internal/commands/local_project/initialize"
+	"github.com/envtrack/envtrack-cli/internal/commands/local_project/samplefile"
 	"github.com/envtrack/envtrack-cli/internal/commands/local_project/secrets"
+	"github.com/envtrack/envtrack-cli/internal/commands/local_project/varfile"
 	"github.com/envtrack/envtrack-cli/internal/commands/local_project/variables"
 	"github.com/envtrack/envtrack-cli/internal/common"
 	"github.com/envtrack/envtrack-cli/internal/config"
@@ -24,6 +26,8 @@ func LocalContextCommand() *cobra.Command {
 	cmd.AddCommand(env.LocalEnvCommand())
 	cmd.AddCommand(variables.LocalVariablesCommand())
 	cmd.AddCommand(secrets.SecretsCommand())
+	cmd.AddCommand(varfile.LocalVariablesCommand())
+	cmd.AddCommand(samplefile.LocalSampleFileCommand())
 	return cmd
 }
 
