@@ -38,14 +38,9 @@ func runLocalContext(cmd *cobra.Command, args []string) {
 		return
 	}
 
-	if localCfg.Organization.ID == "" || localCfg.Project.ID == "" {
+	if localCfg.Organization == nil || localCfg.Organization.ID == "" || localCfg.Project.ID == "" {
 		fmt.Println("Local context is incomplete. Use 'envtrack ctx init' to initialize a local project.")
 		return
-	}
-
-	output := map[string]string{
-		"Organization": fmt.Sprintf("%s (%s)", localCfg.Organization.Name, localCfg.Organization.ShortName),
-		"Project":      fmt.Sprintf("%s (%s)", localCfg.Project.Name, localCfg.Project.ShortName),
 	}
 
 	formatter, err := common.GetFormatter(cmd.Context())
@@ -53,6 +48,6 @@ func runLocalContext(cmd *cobra.Command, args []string) {
 		fmt.Printf("Error getting formatter: %v\n", err)
 		return
 	}
-	formattedOutput, _ := formatter.Format(output)
+	formattedOutput, _ := formatter.Format(localCfg)
 	fmt.Print(formattedOutput)
 }

@@ -10,6 +10,7 @@ func LocalSampleFileCommand() *cobra.Command {
 		Aliases: []string{"sf"},
 		Args:    cobra.NoArgs,
 		Short:   "Manage sample files",
+		RunE:    runList,
 	}
 
 	cmd.AddCommand(

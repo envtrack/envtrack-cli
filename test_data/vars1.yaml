@@ -9,6 +9,13 @@ skills:
     - "JavaScript"
     - "Python"
     - "Java"
+long:
+    path:
+        to:
+            a:
+                deeply:
+                    nested:
+                        value: "Hello, World!"
 education:
     degree: "Bachelor's"
     major: "Computer Science"

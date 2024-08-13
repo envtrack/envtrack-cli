@@ -1,0 +1,16 @@
+environments: []
+organization:
+    id: apptium
+    name: apptium
+    shortName: apptium
+project:
+    id: orbitera
+    name: orbitera
+    shortName: orb
+environments:
+    - name: shadow
+      shortName: sh
+      linkedfiles:
+        - path: C:\Users\cuzze\src\apptium\or-deploy-config\test-env\shadow-techdata-smp\gke-env.yaml
+          alias: gke-env.yaml
+selectedenv: ""

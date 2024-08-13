@@ -12,6 +12,17 @@
         "Python",
         "Java"
     ],
+    "long": {
+        "path": {
+            "to": {
+                "a": {
+                    "nested": {
+                        "property": "value"
+                    }
+                }
+            }
+        }
+    },
     "education": {
         "degree": "Bachelor's",
         "major": "Computer Science",

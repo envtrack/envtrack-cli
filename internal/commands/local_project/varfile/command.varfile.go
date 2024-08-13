@@ -6,7 +6,7 @@ import (
 
 func LocalVariablesCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "varfile",
+		Use:     "var-files",
 		Aliases: []string{"vf"},
 		Args:    cobra.NoArgs,
 		Short:   "Manage variable local files",
@@ -14,9 +14,7 @@ func LocalVariablesCommand() *cobra.Command {
 
 	cmd.AddCommand(
 		linkVarfileCommand(),
-	// addVariableCommand(),
-	// updateVariableCommand(),
-	// removeVariableCommand(),
+		readVarfileCommand(),
 	)
 
 	return cmd

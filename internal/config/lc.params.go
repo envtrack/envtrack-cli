@@ -6,6 +6,7 @@ type LocalConfigParams struct {
 	Organization *LocalConfigOrganization  `json:"organization"`
 	Project      *LocalConfigProject       `json:"project"`
 	Environments []*LocalConfigEnvironment `json:"environments"`
+	Commands     []*LocalConfigCommand     `json:"commands"`
 	SelectedEnv  string                    `json:"selectedEnv"`
 }
 

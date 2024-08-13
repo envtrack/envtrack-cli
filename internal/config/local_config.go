@@ -32,8 +32,17 @@ func init() {
 	LocalConf.v.SetConfigFile(localConfigName + ".yaml")
 
 	if err := LocalConf.v.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			LocalConf.v.WriteConfig()
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			// Config file not found; ignore error if desired
+			fmt.Printf("Config file not found: %s\n", err)
+
+			// Create a new config file with default values if needed
+			if err := LocalConf.v.SafeWriteConfig(); err != nil {
+				fmt.Printf("Error creating config file: %s\n", err)
+			}
+		} else {
+			// Config file was found but another error was produced
+			fmt.Printf("Error reading config file: %s\n", err)
 		}
 	}
 }
