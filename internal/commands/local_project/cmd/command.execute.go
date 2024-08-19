@@ -2,10 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"os/exec"
 
 	"github.com/envtrack/envtrack-cli/internal/config"
+	"github.com/envtrack/envtrack-cli/internal/exec"
 	"github.com/spf13/cobra"
 )
 
@@ -30,15 +29,18 @@ func runExecuteCommand(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("command '%s' not found", commandName)
 	}
 
-	fmt.Printf("Executing command: %s\n", command.Description)
+	fmt.Printf("Executing command: %s\n%s\n", command.Description, command.Command)
 
-	execCmd := exec.Command("sh", "-c", command.Command)
-	execCmd.Stdout = os.Stdout
-	execCmd.Stderr = os.Stderr
+	manager := exec.NewCommandManager("test_log")
+	manager.AddCommand(&exec.Command{
+		Name:       command.Name,
+		Command:    command.Command,
+		Background: false,
+		// Identifier: command.Name,
+	})
 
-	err = execCmd.Run()
-	if err != nil {
-		return fmt.Errorf("error executing command: %v", err)
+	if err := manager.ExecuteCommand(command.Name); err != nil {
+		return fmt.Errorf("failed to execute command: %v", err)
 	}
 
 	return nil

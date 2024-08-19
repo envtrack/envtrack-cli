@@ -9,31 +9,38 @@ import (
 	"runtime"
 	"strings"
 	"syscall"
+
+	"github.com/alessio/shellescape" // For safe shell escaping
 )
 
 type Command struct {
-	Name         string   `json:"name"`
-	Executable   string   `json:"executable"`
-	Args         []string `json:"args"`
-	Background   bool     `json:"background"`
-	Identifier   string   `json:"identifier"`   // Unique identifier for the command
-	ForceRestart bool     `json:"forceRestart"` // Flag to kill and restart the process if it's already running
+	Name         string `json:"name"`
+	Command      string `json:"command"`
+	Description  string `json:"description"`
+	Background   bool   `json:"background"`
+	ForceRestart bool   `json:"forceRestart"`
 }
 
 type CommandManager struct {
 	Commands map[string]*Command
 	LogFile  string
+	EnvVars  map[string]string // Store environment variables
 }
 
 func NewCommandManager(logFile string) *CommandManager {
 	return &CommandManager{
 		Commands: make(map[string]*Command),
 		LogFile:  logFile,
+		EnvVars:  make(map[string]string),
 	}
 }
 
 func (cm *CommandManager) AddCommand(cmd *Command) {
 	cm.Commands[cmd.Name] = cmd
+}
+
+func (cm *CommandManager) SetEnvVar(key, value string) {
+	cm.EnvVars[key] = value
 }
 
 func (cm *CommandManager) ExecuteCommand(name string) error {
@@ -42,15 +49,24 @@ func (cm *CommandManager) ExecuteCommand(name string) error {
 		return fmt.Errorf("command %s not found", name)
 	}
 
+	expandedCommand := cm.expandVariables(cmd.Command)
+
 	if cmd.Background {
-		return cm.executeBackgroundCommand(cmd)
+		return cm.executeBackgroundCommand(cmd, expandedCommand)
 	}
-	return cm.executeForegroundCommand(cmd)
+	return cm.executeForegroundCommand(cmd, expandedCommand)
 }
 
-func (cm *CommandManager) executeBackgroundCommand(cmd *Command) error {
+func (cm *CommandManager) expandVariables(command string) string {
+	for key, value := range cm.EnvVars {
+		command = strings.ReplaceAll(command, "{{"+key+"}}", shellescape.Quote(value))
+	}
+	return command
+}
+
+func (cm *CommandManager) executeBackgroundCommand(cmd *Command, expandedCommand string) error {
 	// Check if the command is already running
-	running, pid, err := cm.isCommandRunning(cmd)
+	running, pid, err := cm.isCommandRunning(expandedCommand)
 	if err != nil {
 		return fmt.Errorf("failed to check if command is running: %v", err)
 	}
@@ -65,8 +81,13 @@ func (cm *CommandManager) executeBackgroundCommand(cmd *Command) error {
 		}
 	}
 
-	// Start new process
-	execCmd := exec.Command(cmd.Executable, cmd.Args...)
+	var execCmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		execCmd = exec.Command("cmd", "/C", expandedCommand)
+	} else {
+		execCmd = exec.Command("sh", "-c", expandedCommand)
+	}
+
 	if err := execCmd.Start(); err != nil {
 		return fmt.Errorf("failed to start command: %v", err)
 	}
@@ -77,8 +98,13 @@ func (cm *CommandManager) executeBackgroundCommand(cmd *Command) error {
 	return nil
 }
 
-func (cm *CommandManager) executeForegroundCommand(cmd *Command) error {
-	execCmd := exec.Command(cmd.Executable, cmd.Args...)
+func (cm *CommandManager) executeForegroundCommand(cmd *Command, expandedCommand string) error {
+	var execCmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		execCmd = exec.Command("cmd", "/C", expandedCommand)
+	} else {
+		execCmd = exec.Command("sh", "-c", expandedCommand)
+	}
 
 	// Set up pipes for stdout and stderr
 	stdout, err := execCmd.StdoutPipe()
@@ -107,22 +133,17 @@ func (cm *CommandManager) executeForegroundCommand(cmd *Command) error {
 	return nil
 }
 
-func (cm *CommandManager) isCommandRunning(cmd *Command) (bool, int, error) {
+func (cm *CommandManager) isCommandRunning(expandedCommand string) (bool, int, error) {
 	var cmdOutput []byte
 	var err error
 	var pid int
 
 	if runtime.GOOS == "windows" {
-		cmdOutput, err = exec.Command("tasklist", "/FI", fmt.Sprintf("IMAGENAME eq %s", cmd.Executable), "/FO", "CSV", "/NH").Output()
-		if err == nil && len(cmdOutput) > 0 {
-			fields := strings.Split(string(cmdOutput), ",")
-			if len(fields) > 2 {
-				pidStr := strings.Trim(fields[1], "\"")
-				fmt.Sscanf(pidStr, "%d", &pid)
-			}
-		}
+		cmdOutput, err = exec.Command("tasklist", "/FI", fmt.Sprintf("IMAGENAME eq %s", "cmd.exe"), "/FO", "CSV", "/NH").Output()
+		// Note: This is a simplification. In practice, you'd need a more sophisticated
+		// method to accurately identify if the specific command is running on Windows.
 	} else {
-		cmdOutput, err = exec.Command("pgrep", "-f", cmd.Identifier).Output()
+		cmdOutput, err = exec.Command("pgrep", "-f", expandedCommand).Output()
 		if err == nil && len(cmdOutput) > 0 {
 			fmt.Sscanf(string(cmdOutput), "%d", &pid)
 		}
@@ -153,6 +174,7 @@ func (cm *CommandManager) killProcess(pid int) error {
 
 	return process.Signal(syscall.SIGTERM)
 }
+
 func (cm *CommandManager) logCommandOutput(name string, cmd *exec.Cmd) {
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {

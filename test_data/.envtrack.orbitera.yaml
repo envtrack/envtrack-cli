@@ -1,4 +1,25 @@
-environments: []
+commands:
+    - command: echo {{gke-env.version}}; echo {{gke-env.GKE_INSTANCE}}
+      description: Runs the base application
+      name: run
+    - command: cloud_sql_proxy -instances=apptium:us-central1:orbitera-dev=tcp:3306
+      description: Opens the cloud sql proxy
+      name: open_cloud_sql_proxy
+environments:
+    - id: ""
+      name: shadow
+      shortName: sh
+      variables:
+        - name: testVar
+          value: my test var
+      secrets:
+        - name: testSecret
+          value: aa899895ac1913569e0d9ddf37360f79057f483884f4f257b606a22ec99feeb7
+      linkedfiles:
+        - path: C:\Users\cuzze\src\apptium\or-deploy-config\test-env\shadow-techdata-smp\gke-env.yaml
+          alias: gke-env
+      samplefiles: []
+      isselected: false
 organization:
     id: apptium
     name: apptium
@@ -7,10 +28,4 @@ project:
     id: orbitera
     name: orbitera
     shortName: orb
-environments:
-    - name: shadow
-      shortName: sh
-      linkedfiles:
-        - path: C:\Users\cuzze\src\apptium\or-deploy-config\test-env\shadow-techdata-smp\gke-env.yaml
-          alias: gke-env.yaml
-selectedenv: ""
+selectedenv: sh

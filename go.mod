@@ -3,6 +3,7 @@ module github.com/envtrack/envtrack-cli
 go 1.22
 
 require (
+	github.com/alessio/shellescape v1.4.1
 	github.com/cbroglie/mustache v1.4.0
 	github.com/hoisie/mustache v0.0.0-20160804235033-6375acf62c69
 	github.com/spf13/cobra v1.8.1
@@ -13,7 +14,6 @@ require (
 )
 
 require (
-	github.com/alessio/shellescape v1.4.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/danieljoos/wincred v1.2.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect

@@ -3,6 +3,7 @@ package local_project
 import (
 	"fmt"
 
+	cmdCommand "github.com/envtrack/envtrack-cli/internal/commands/local_project/cmd"
 	"github.com/envtrack/envtrack-cli/internal/commands/local_project/env"
 	"github.com/envtrack/envtrack-cli/internal/commands/local_project/initialize"
 	"github.com/envtrack/envtrack-cli/internal/commands/local_project/samplefile"
@@ -17,6 +18,7 @@ import (
 func LocalContextCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "context",
+		Args:    cobra.NoArgs,
 		Aliases: []string{"ctx"},
 		GroupID: "local_project",
 		Short:   "Display or manage local EnvTrack context",
@@ -28,6 +30,7 @@ func LocalContextCommand() *cobra.Command {
 	cmd.AddCommand(secrets.SecretsCommand())
 	cmd.AddCommand(varfile.LocalVariablesCommand())
 	cmd.AddCommand(samplefile.LocalSampleFileCommand())
+	cmd.AddCommand(cmdCommand.CommandCommand())
 	return cmd
 }
 
