@@ -90,12 +90,151 @@ func LoadFromFile(path string) (*types.CommandConfig, error) {
 		baseCfg.FilePath = commandConfig.FilePath
 		baseCfg.RootPath = commandConfig.RootPath
 
+		// Load templates from any CommandTemplatesPaths into baseCfg.Templates
+		if err := loadTemplatesIntoCommandConfig(baseCfg); err != nil {
+			// Non-fatal: log and continue returning the merged config
+			log.Printf("Warning: error loading templates: %v\n", err)
+		}
+
 		return baseCfg, nil
 	} else {
 		log.Println("No external config path set; using parsed config as-is.")
 	}
 
+	// Load templates from any CommandTemplatesPaths into the parsed commandConfig
+	if err := loadTemplatesIntoCommandConfig(&commandConfig); err != nil {
+		log.Printf("Warning: error loading templates: %v\n", err)
+	}
+
 	return &commandConfig, nil
+}
+
+// loadTemplatesIntoCommandConfig scans CommandTemplatesPaths (files or directories)
+// and loads template definitions into cfg.Templates. YAML/JSON files are supported.
+// Non-fatal errors are returned but callers typically log and continue.
+func loadTemplatesIntoCommandConfig(cfg *types.CommandConfig) error {
+	if cfg == nil || len(cfg.CommandTemplatesPaths) == 0 {
+		return nil
+	}
+
+	if cfg.Templates == nil {
+		cfg.Templates = make(map[string]types.InternalCommand)
+	}
+
+	var aggregateErrs []string
+
+	for _, pathEntry := range cfg.CommandTemplatesPaths {
+		if pathEntry == "" {
+			continue
+		}
+
+		// Resolve variables in pathEntry
+		resolved := resolvePathVariables(cfg, pathEntry)
+		if strings.Contains(pathEntry, "${") && resolved == "" {
+			aggregateErrs = append(aggregateErrs, fmt.Sprintf("unable to resolve variables in template path: %s", pathEntry))
+			continue
+		}
+		p := resolved
+		if p == "" {
+			p = pathEntry
+		}
+
+		if !filepath.IsAbs(p) {
+			if cfg.RootPath != nil && *cfg.RootPath != "" {
+				p = filepath.Join(*cfg.RootPath, p)
+			} else if cwd, err := os.Getwd(); err == nil {
+				p = filepath.Join(cwd, p)
+			}
+		}
+		if abs, err := filepath.Abs(p); err == nil {
+			p = abs
+		}
+
+		fi, err := os.Stat(p)
+		if err != nil {
+			aggregateErrs = append(aggregateErrs, fmt.Sprintf("error accessing template path '%s': %v", p, err))
+			continue
+		}
+
+		var files []string
+		if fi.IsDir() {
+			entries, err := os.ReadDir(p)
+			if err != nil {
+				aggregateErrs = append(aggregateErrs, fmt.Sprintf("error reading template directory '%s': %v", p, err))
+				continue
+			}
+			for _, e := range entries {
+				if e.IsDir() {
+					continue
+				}
+				ext := strings.ToLower(filepath.Ext(e.Name()))
+				if ext == ".yaml" || ext == ".yml" || ext == ".json" {
+					files = append(files, filepath.Join(p, e.Name()))
+				}
+			}
+		} else {
+			files = append(files, p)
+		}
+
+		for _, f := range files {
+			b, err := os.ReadFile(f)
+			if err != nil {
+				aggregateErrs = append(aggregateErrs, fmt.Sprintf("error reading template file '%s': %v", f, err))
+				continue
+			}
+
+			// Try YAML/JSON unmarshal into either {templates: {...}} or a top-level map of templates
+			// First try wrapper { templates: map[string]InternalCommand }
+			var wrapper struct {
+				Templates map[string]types.InternalCommand `json:"templates" yaml:"templates"`
+			}
+			if err := yaml.Unmarshal(b, &wrapper); err == nil && len(wrapper.Templates) > 0 {
+				for tn, tc := range wrapper.Templates {
+					// set metadata
+					tc.Name = tn
+					tc.OriginalTemplateFilepath = &f
+					cfg.Templates[tn] = tc
+				}
+				continue
+			}
+
+			// Try direct mapping
+			var direct map[string]types.InternalCommand
+			if err := yaml.Unmarshal(b, &direct); err == nil && len(direct) > 0 {
+				for tn, tc := range direct {
+					tc.Name = tn
+					tc.OriginalTemplateFilepath = &f
+					cfg.Templates[tn] = tc
+				}
+				continue
+			}
+
+			// As a fallback try JSON unmarshal (for .json files or other cases)
+			if err := json.Unmarshal(b, &wrapper); err == nil && len(wrapper.Templates) > 0 {
+				for tn, tc := range wrapper.Templates {
+					tc.Name = tn
+					tc.OriginalTemplateFilepath = &f
+					cfg.Templates[tn] = tc
+				}
+				continue
+			}
+			if err := json.Unmarshal(b, &direct); err == nil && len(direct) > 0 {
+				for tn, tc := range direct {
+					tc.Name = tn
+					tc.OriginalTemplateFilepath = &f
+					cfg.Templates[tn] = tc
+				}
+				continue
+			}
+
+			aggregateErrs = append(aggregateErrs, fmt.Sprintf("unable to parse template file '%s' as JSON or YAML", f))
+		}
+	}
+
+	if len(aggregateErrs) > 0 {
+		return fmt.Errorf(strings.Join(aggregateErrs, "; "))
+	}
+	return nil
 }
 
 // mergeCommandConfig merges overlay into base. overlay values overwrite base where applicable.
