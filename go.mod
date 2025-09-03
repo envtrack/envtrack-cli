@@ -7,6 +7,7 @@ toolchain go1.24.6
 require (
 	github.com/cbroglie/mustache v1.4.0
 	github.com/gdamore/tcell/v2 v2.9.0
+	github.com/gorilla/websocket v1.5.3
 	github.com/hoisie/mustache v0.0.0-20160804235033-6375acf62c69
 	github.com/rivo/tview v0.42.0
 	github.com/spf13/cobra v1.8.1

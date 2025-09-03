@@ -23,9 +23,10 @@ func LocalContextCommand() *cobra.Command {
 		Run:     runLocalContext,
 	}
 	cmd.AddCommand(initialize.InitCommand())
-	cmd.AddCommand(initialize.LoadConfigCommand()) // Register load-config command
-	cmd.AddCommand(initialize.CmdDebugCommand())   // Register debug command to parse and display commands config
-	cmd.AddCommand(initialize.CmdWalkCommand())    // Register walk command to traverse parsed configs
+	cmd.AddCommand(initialize.LoadConfigCommand())  // Register load-config command
+	cmd.AddCommand(initialize.CmdDebugCommand())    // Register debug command to parse and display commands config
+	cmd.AddCommand(initialize.CmdDebugWebCommand()) // Register web debug command to serve JSON in browser
+	cmd.AddCommand(initialize.CmdWalkCommand())     // Register walk command to traverse parsed configs
 	cmd.AddCommand(env.LocalEnvCommand())
 	cmd.AddCommand(variables.LocalVariablesCommand())
 	cmd.AddCommand(secrets.SecretsCommand())

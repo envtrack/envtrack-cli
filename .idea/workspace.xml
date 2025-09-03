@@ -4,8 +4,14 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fa084843-ec94-4f6e-9802-06b6a15e315c" name="Changes" comment="feat: Implement template loading from CommandTemplatesPaths in envTrack CLI">
+    <list default="true" id="fa084843-ec94-4f6e-9802-06b6a15e315c" name="Changes" comment="feat: Update error handling in template loading for envTrack CLI">
+      <change afterPath="$PROJECT_DIR$/internal/commands/local_project/initialize/command.debug_web.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/commandconfig/loader.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commandconfig/loader.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/commandconfig/parsed.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commandconfig/parsed.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/commands/local_project/command.ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commands/local_project/command.ctx.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/commands/local_project/initialize/command.debug_config.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commands/local_project/initialize/command.debug_config.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +76,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="feat: Add commands for loading and debugging configurations in envTrack CLI" />
     <MESSAGE value="feat: Implement template loading from CommandTemplatesPaths in envTrack CLI" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: Implement template loading from CommandTemplatesPaths in envTrack CLI" />
+    <MESSAGE value="feat: Update error handling in template loading for envTrack CLI" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: Update error handling in template loading for envTrack CLI" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

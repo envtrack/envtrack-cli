@@ -13,6 +13,7 @@ var (
 	hideCommandConfig   bool
 	hideParsedConfigs   bool
 	hideParsedTemplates bool
+	hideParsedCommands  bool
 )
 
 // CmdDebugCommand returns a Cobra command that parses the commands configuration and
@@ -28,6 +29,7 @@ func CmdDebugCommand() *cobra.Command {
 	cmd.Flags().BoolVarP(&hideCommandConfig, "no-command-config", "c", false, "Do not include commandConfig in output")
 	cmd.Flags().BoolVarP(&hideParsedConfigs, "no-parsed-configs", "p", false, "Do not include parsedConfigs in output")
 	cmd.Flags().BoolVarP(&hideParsedTemplates, "no-parsed-templates", "t", false, "Do not include parsedTemplates in output")
+	cmd.Flags().BoolVarP(&hideParsedCommands, "no-parsed-commands", "m", false, "Do not include parsedCommands in output")
 
 	return cmd
 }
@@ -61,6 +63,12 @@ func runCmdDebug(_ *cobra.Command, _ []string) {
 		fmt.Printf("Warning: error parsing templates: %v\n", tErr)
 	}
 
+	// Parse typed InternalCommand objects
+	parsedCommands, pcErr := commandconfig.ParseInternalCommandsFromCommandConfig(commandsConfiguration)
+	if pcErr != nil {
+		fmt.Printf("Warning: error parsing commands: %v\n", pcErr)
+	}
+
 	outObj := map[string]interface{}{}
 	if !hideCommandConfig {
 		outObj["commandConfig"] = commandsConfiguration
@@ -71,10 +79,13 @@ func runCmdDebug(_ *cobra.Command, _ []string) {
 	if !hideParsedTemplates {
 		outObj["parsedTemplates"] = parsedTemplates
 	}
+	if !hideParsedCommands {
+		outObj["parsedCommands"] = parsedCommands
+	}
 
 	// If nothing was selected, inform the user instead of printing an empty object.
 	if len(outObj) == 0 {
-		fmt.Println("No output selected (commandConfig, parsedConfigs and parsedTemplates are hidden). Use flags to include output.")
+		fmt.Println("No output selected (commandConfig, parsedConfigs, parsedTemplates and parsedCommands are hidden). Use flags to include output.")
 		return
 	}
 

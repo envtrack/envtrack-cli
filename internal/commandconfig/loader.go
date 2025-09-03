@@ -96,6 +96,11 @@ func LoadFromFile(path string) (*types.CommandConfig, error) {
 			log.Printf("Warning: error loading templates: %v\n", err)
 		}
 
+		// Load commands from any CommandFolderPaths into baseCfg.Commands
+		if err := loadCommandsIntoCommandConfig(baseCfg); err != nil {
+			log.Printf("Warning: error loading commands: %v\n", err)
+		}
+
 		return baseCfg, nil
 	} else {
 		log.Println("No external config path set; using parsed config as-is.")
@@ -104,6 +109,11 @@ func LoadFromFile(path string) (*types.CommandConfig, error) {
 	// Load templates from any CommandTemplatesPaths into the parsed commandConfig
 	if err := loadTemplatesIntoCommandConfig(&commandConfig); err != nil {
 		log.Printf("Warning: error loading templates: %v\n", err)
+	}
+
+	// Load commands from any CommandFolderPaths into the parsed commandConfig
+	if err := loadCommandsIntoCommandConfig(&commandConfig); err != nil {
+		log.Printf("Warning: error loading commands: %v\n", err)
 	}
 
 	return &commandConfig, nil
@@ -237,6 +247,133 @@ func loadTemplatesIntoCommandConfig(cfg *types.CommandConfig) error {
 	return nil
 }
 
+// loadCommandsIntoCommandConfig scans CommandFolderPaths (files or directories)
+// and loads command definitions into cfg.Commands. YAML/JSON files are supported.
+// Non-fatal errors are returned but callers typically log and continue.
+func loadCommandsIntoCommandConfig(cfg *types.CommandConfig) error {
+	if cfg == nil || len(cfg.CommandFolderPaths) == 0 {
+		return nil
+	}
+
+	if cfg.Commands == nil {
+		cfg.Commands = make(map[string]types.InternalCommand)
+	}
+
+	var aggregateErrs []string
+
+	for _, pathEntry := range cfg.CommandFolderPaths {
+		if pathEntry == "" {
+			continue
+		}
+
+		// Resolve variables in pathEntry
+		resolved := resolvePathVariables(cfg, pathEntry)
+		if strings.Contains(pathEntry, "${") && resolved == "" {
+			aggregateErrs = append(aggregateErrs, fmt.Sprintf("unable to resolve variables in command path: %s", pathEntry))
+			continue
+		}
+		p := resolved
+		if p == "" {
+			p = pathEntry
+		}
+
+		if !filepath.IsAbs(p) {
+			if cfg.RootPath != nil && *cfg.RootPath != "" {
+				p = filepath.Join(*cfg.RootPath, p)
+			} else if cwd, err := os.Getwd(); err == nil {
+				p = filepath.Join(cwd, p)
+			}
+		}
+		if abs, err := filepath.Abs(p); err == nil {
+			p = abs
+		}
+
+		fi, err := os.Stat(p)
+		if err != nil {
+			// skip non-existent paths
+			continue
+		}
+
+		var files []string
+		if fi.IsDir() {
+			entries, err := os.ReadDir(p)
+			if err != nil {
+				aggregateErrs = append(aggregateErrs, fmt.Sprintf("error reading command directory '%s': %v", p, err))
+				continue
+			}
+			for _, e := range entries {
+				if e.IsDir() {
+					continue
+				}
+				ext := strings.ToLower(filepath.Ext(e.Name()))
+				if ext == ".yaml" || ext == ".yml" || ext == ".json" {
+					files = append(files, filepath.Join(p, e.Name()))
+				}
+			}
+		} else {
+			files = append(files, p)
+		}
+
+		for _, f := range files {
+			b, err := os.ReadFile(f)
+			if err != nil {
+				aggregateErrs = append(aggregateErrs, fmt.Sprintf("error reading command file '%s': %v", f, err))
+				continue
+			}
+
+			// Try YAML/JSON unmarshal into either {commands: {...}} or a top-level map of commands
+			// First try wrapper { commands: map[string]InternalCommand }
+			var wrapper struct {
+				Commands map[string]types.InternalCommand `json:"commands" yaml:"commands"`
+			}
+			if err := yaml.Unmarshal(b, &wrapper); err == nil && len(wrapper.Commands) > 0 {
+				for cn, cc := range wrapper.Commands {
+					cc.Name = cn
+					cc.OriginalFilepath = &f
+					cfg.Commands[cn] = cc
+				}
+				continue
+			}
+
+			// Try direct mapping
+			var direct map[string]types.InternalCommand
+			if err := yaml.Unmarshal(b, &direct); err == nil && len(direct) > 0 {
+				for cn, cc := range direct {
+					cc.Name = cn
+					cc.OriginalFilepath = &f
+					cfg.Commands[cn] = cc
+				}
+				continue
+			}
+
+			// As a fallback try JSON unmarshal (for .json files or other cases)
+			if err := json.Unmarshal(b, &wrapper); err == nil && len(wrapper.Commands) > 0 {
+				for cn, cc := range wrapper.Commands {
+					cc.Name = cn
+					cc.OriginalFilepath = &f
+					cfg.Commands[cn] = cc
+				}
+				continue
+			}
+			if err := json.Unmarshal(b, &direct); err == nil && len(direct) > 0 {
+				for cn, cc := range direct {
+					cc.Name = cn
+					cc.OriginalFilepath = &f
+					cfg.Commands[cn] = cc
+				}
+				continue
+			}
+
+			aggregateErrs = append(aggregateErrs, fmt.Sprintf("unable to parse command file '%s' as JSON or YAML", f))
+		}
+	}
+
+	if len(aggregateErrs) > 0 {
+		return fmt.Errorf(strings.Join(aggregateErrs, "; "))
+	}
+	return nil
+}
+
 // mergeCommandConfig merges overlay into base. overlay values overwrite base where applicable.
 // For slices, values are appended. For maps, keys from overlay override existing keys; nested
 // maps (e.g., Variables) are merged with overlay values overwriting matching keys.
@@ -266,6 +403,20 @@ func mergeCommandConfig(base, overlay *types.CommandConfig) {
 	}
 	if overlay.AutoSelectDefaultSession != nil {
 		base.AutoSelectDefaultSession = overlay.AutoSelectDefaultSession
+	}
+	if overlay.CommandFolderPaths != nil {
+		if base.CommandFolderPaths == nil {
+			base.CommandFolderPaths = make([]string, 0)
+		}
+		base.CommandFolderPaths = append(base.CommandFolderPaths, overlay.CommandFolderPaths...)
+	}
+	if overlay.Commands != nil {
+		if base.Commands == nil {
+			base.Commands = make(map[string]types.InternalCommand)
+		}
+		for k, v := range overlay.Commands {
+			base.Commands[k] = v
+		}
 	}
 
 	// Slices: append
