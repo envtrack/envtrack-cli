@@ -23,6 +23,9 @@ func LocalContextCommand() *cobra.Command {
 		Run:     runLocalContext,
 	}
 	cmd.AddCommand(initialize.InitCommand())
+	cmd.AddCommand(initialize.LoadConfigCommand()) // Register load-config command
+	cmd.AddCommand(initialize.CmdDebugCommand())   // Register debug command to parse and display commands config
+	cmd.AddCommand(initialize.CmdWalkCommand())    // Register walk command to traverse parsed configs
 	cmd.AddCommand(env.LocalEnvCommand())
 	cmd.AddCommand(variables.LocalVariablesCommand())
 	cmd.AddCommand(secrets.SecretsCommand())
@@ -31,10 +34,15 @@ func LocalContextCommand() *cobra.Command {
 	return cmd
 }
 
-func runLocalContext(cmd *cobra.Command, args []string) {
+func runLocalContext(cmd *cobra.Command, _ []string) {
 	localCfg, err := config.LocalConf.GetLocalConfig()
 	if err != nil || localCfg == nil {
 		fmt.Println("No local context found. Use 'envtrack ctx init' to initialize a local project.")
+		return
+	}
+
+	if localCfg.Organization == nil || localCfg.Project == nil {
+		fmt.Println("Local context is incomplete. Use 'envtrack ctx init' to initialize a local project.")
 		return
 	}
 

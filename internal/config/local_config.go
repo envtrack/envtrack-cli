@@ -78,6 +78,7 @@ func (c *localConfStruct) SaveLocalConfig(config LocalConfigParams) error {
 	c.v.Set("project", config.Project)
 	c.v.Set("environments", config.Environments)
 	c.v.Set("selectedEnv", config.SelectedEnv)
+	c.v.Set("commandsConfiguration", config.CommandsConfiguration) // Save new param
 
 	err := c.v.WriteConfig()
 	if err != nil {

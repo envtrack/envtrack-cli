@@ -1,12 +1,16 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/envtrack/envtrack-cli/internal/types"
+)
 
 type LocalConfigParams struct {
-	Organization *LocalConfigOrganization  `json:"organization"`
-	Project      *LocalConfigProject       `json:"project"`
-	Environments []*LocalConfigEnvironment `json:"environments"`
-	SelectedEnv  string                    `json:"selectedEnv"`
+	Organization          *LocalConfigOrganization  `json:"organization" yaml:"organization"`
+	Project               *LocalConfigProject       `json:"project" yaml:"project"`
+	Environments          []*LocalConfigEnvironment `json:"environments" yaml:"environments"`
+	SelectedEnv           string                    `json:"selectedEnv" yaml:"selectedEnv"`
+	CommandsConfiguration *types.CommandConfig      `json:"commandsConfiguration" yaml:"commandsConfiguration"`
 }
 
 func (lc *LocalConfigParams) GetSelectedEnvironment() (*LocalConfigEnvironment, error) {
