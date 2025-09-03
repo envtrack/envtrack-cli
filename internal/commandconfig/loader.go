@@ -152,7 +152,7 @@ func loadTemplatesIntoCommandConfig(cfg *types.CommandConfig) error {
 
 		fi, err := os.Stat(p)
 		if err != nil {
-			aggregateErrs = append(aggregateErrs, fmt.Sprintf("error accessing template path '%s': %v", p, err))
+			//aggregateErrs = append(aggregateErrs, fmt.Sprintf("error accessing template path '%s': %v", p, err))
 			continue
 		}
 
