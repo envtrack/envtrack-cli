@@ -443,10 +443,191 @@ func ParseInternalCommandsFromCommandConfig(cmdCfg *types.CommandConfig) (map[st
 		if ofp, ok := raw["originalFilepath"].(string); ok && ofp != "" {
 			ic.OriginalFilepath = &ofp
 		}
+
+		// If this command references a template, try to locate it and merge (template fields are base, command overrides)
+		templateName := ""
+		if ic.Template != nil && *ic.Template != "" {
+			templateName = *ic.Template
+		} else if ic.TemplateName != "" {
+			templateName = ic.TemplateName
+		} else if rt, ok := raw["template"].(string); ok && rt != "" {
+			templateName = rt
+		}
+		if templateName != "" {
+			if tmpl, ok := cmdCfg.Templates[templateName]; ok {
+				// merge template and command (override wins)
+				merged := mergeInternalCommand(tmpl, ic)
+				ic = merged
+				// mark that a template was applied
+				hasT := true
+				ic.HasTemplate = &hasT
+			} else {
+				// template not found: leave as-is (non-fatal)
+			}
+		}
 		result[name] = ic
 	}
 
 	return result, nil
+}
+
+// mergeInternalCommand merges a template InternalCommand and an override InternalCommand.
+// Fields from override take precedence when set. The template's OriginalTemplateFilepath
+// is preserved in the result; OriginalFilepath is taken from the override when present.
+func mergeInternalCommand(tmpl types.InternalCommand, override types.InternalCommand) types.InternalCommand {
+	res := tmpl // copy
+
+	// Name/FullName
+	if override.Name != "" {
+		res.Name = override.Name
+	}
+	if override.FullName != "" {
+		res.FullName = override.FullName
+	}
+
+	// Pointer booleans and basic pointers: override if non-nil
+	if override.SkipTerminalAutofocus != nil {
+		res.SkipTerminalAutofocus = override.SkipTerminalAutofocus
+	}
+	if override.AutocloseCommand != nil {
+		res.AutocloseCommand = override.AutocloseCommand
+	}
+	if override.IsJSONOutput != nil {
+		res.IsJSONOutput = override.IsJSONOutput
+	}
+	if override.HasTemplate != nil {
+		res.HasTemplate = override.HasTemplate
+	}
+	if override.IsInformational != nil {
+		res.IsInformational = override.IsInformational
+	}
+	if override.InformationalCommandSettings != nil {
+		res.InformationalCommandSettings = override.InformationalCommandSettings
+	}
+	if override.KillCmd != nil {
+		res.KillCmd = override.KillCmd
+	}
+	if override.Background != nil {
+		res.Background = override.Background
+	}
+	if override.ForceEnv != nil {
+		res.ForceEnv = override.ForceEnv
+	}
+	if override.Color != nil {
+		res.Color = override.Color
+	}
+	if override.EnableLog != nil {
+		res.EnableLog = override.EnableLog
+	}
+	if override.Description != nil {
+		res.Description = override.Description
+	}
+
+	// String fields: override if non-empty
+	if override.ProtectionOnEnv != "" {
+		res.ProtectionOnEnv = override.ProtectionOnEnv
+	}
+	if override.Command != "" {
+		res.Command = override.Command
+	}
+	if override.Pipe != "" {
+		res.Pipe = override.Pipe
+	}
+	if override.DefaultFileName != "" {
+		res.DefaultFileName = override.DefaultFileName
+	}
+	if override.TemplateName != "" {
+		res.TemplateName = override.TemplateName
+	}
+
+	// Pointer strings
+	if override.Shell != nil {
+		res.Shell = override.Shell
+	}
+	if override.ExternalShellLocation != nil {
+		res.ExternalShellLocation = override.ExternalShellLocation
+	}
+	if override.Template != nil {
+		res.Template = override.Template
+	}
+	if override.Extend != nil {
+		res.Extend = override.Extend
+	}
+
+	// Slices: fully override when provided (non-nil)
+	if override.ExternalShellArguments != nil && len(override.ExternalShellArguments) > 0 {
+		res.ExternalShellArguments = override.ExternalShellArguments
+	}
+	if override.SubCommands != nil && len(override.SubCommands) > 0 {
+		res.SubCommands = override.SubCommands
+	}
+	if override.RequiredParams != nil && len(override.RequiredParams) > 0 {
+		res.RequiredParams = override.RequiredParams
+	}
+
+	// Params (map[string]string): merge, with override winning
+	if res.Params == nil && override.Params == nil {
+		// nothing
+	} else {
+		if res.Params == nil {
+			res.Params = make(map[string]string)
+		}
+		for k, v := range override.Params {
+			res.Params[k] = v
+		}
+	}
+
+	// ParamOptions
+	if res.ParamOptions == nil && override.ParamOptions == nil {
+		// nothing
+	} else {
+		if res.ParamOptions == nil {
+			res.ParamOptions = make(map[string]types.ParamOption)
+		}
+		for k, v := range override.ParamOptions {
+			res.ParamOptions[k] = v
+		}
+	}
+
+	// ConfigMap (map[string]string)
+	if res.ConfigMap == nil && override.ConfigMap == nil {
+		// nothing
+	} else {
+		if res.ConfigMap == nil {
+			res.ConfigMap = make(map[string]string)
+		}
+		for k, v := range override.ConfigMap {
+			res.ConfigMap[k] = v
+		}
+	}
+
+	// Sessions: override per session key
+	if res.Sessions == nil && override.Sessions == nil {
+		// nothing
+	} else {
+		if res.Sessions == nil {
+			res.Sessions = make(map[string]types.SessionConfig)
+		}
+		for k, v := range override.Sessions {
+			res.Sessions[k] = v
+		}
+	}
+
+	// ImportFrom and other interface fields
+	if override.ImportFrom != nil {
+		res.ImportFrom = override.ImportFrom
+	}
+
+	// Original file/template metadata
+	// keep template's OriginalTemplateFilepath; override's OriginalFilepath takes precedence
+	if tmpl.OriginalTemplateFilepath != nil {
+		res.OriginalTemplateFilepath = tmpl.OriginalTemplateFilepath
+	}
+	if override.OriginalFilepath != nil {
+		res.OriginalFilepath = override.OriginalFilepath
+	}
+
+	return res
 }
 
 // convertGeneric converts YAML-parsed structures (which may contain map[interface{}]interface{})
