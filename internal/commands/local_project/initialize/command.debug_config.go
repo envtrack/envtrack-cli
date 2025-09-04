@@ -20,7 +20,7 @@ var (
 // prints the parsed structure for debugging/visualization.
 func CmdDebugCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "cmd-debug",
+		Use:   "debug",
 		Short: "Parse and display the commands configuration (for debugging)",
 		Run:   runCmdDebug,
 	}
