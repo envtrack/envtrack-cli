@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fa084843-ec94-4f6e-9802-06b6a15e315c" name="Changes" comment="feat: Implement template merging for internal commands in envTrack CLI">
-      <change afterPath="$PROJECT_DIR$/internal/commands/local_project/initialize/debug_web.html.go" afterDir="false" />
+    <list default="true" id="fa084843-ec94-4f6e-9802-06b6a15e315c" name="Changes" comment="feat: Simplify command names and extract HTML for web debug command">
+      <change afterPath="$PROJECT_DIR$/internal/commandconfig/generator.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/commandconfig/params.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/commands/local_project/initialize/command.generate.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/commands/local_project/initialize/command.debug_config.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commands/local_project/initialize/command.debug_config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/commands/local_project/initialize/command.debug_web.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commands/local_project/initialize/command.debug_web.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/commands/local_project/command.ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commands/local_project/command.ctx.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,7 +64,7 @@
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.github.copilot.settings.general.GeneralConfigurable"
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
   <component name="SharedIndexes">
@@ -84,7 +85,8 @@
     <MESSAGE value="feat: Update error handling in template loading for envTrack CLI" />
     <MESSAGE value="feat: Add web debug command to serve parsed commands configuration via HTTP" />
     <MESSAGE value="feat: Implement template merging for internal commands in envTrack CLI" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: Implement template merging for internal commands in envTrack CLI" />
+    <MESSAGE value="feat: Simplify command names and extract HTML for web debug command" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: Simplify command names and extract HTML for web debug command" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
